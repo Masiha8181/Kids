@@ -35,8 +35,7 @@ jobs:
           exclude: |
             **/appsettings.json
             **/web.config
-            **/wwwroot/**
-          include: |
-            **/wwwroot/js/**
-            **/wwwroot/css/**
-            **/wwwroot/Admin/**
+            **/wwwroot/uploads**
+            **/wwwroot/ckeditor**
+            **/wwwroot/fontawesome**
+        
