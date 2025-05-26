@@ -1,14 +1,45 @@
-﻿name: Test Action
+﻿name: Deploy ASP.NET Core to Plesk
 
 on:
   push:
     branches:
-      - main
+      - main  # هر وقت به شاخه main پوش کردید، این Workflow اجرا می‌شه
 
 jobs:
-  test:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print Hello
-        run: echo "Hello from GitHub Actions 👋"
+    # 1. چک‌اوت کردن کد پروژه
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. نصب دات‌نت SDK
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'  # نسخه دات‌نت پروژه‌تون رو وارد کنید
+
+    # 3. نصب وابستگی‌ها
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # 4. بیلد پروژه
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    # 5. پابلیش پروژه
+    - name: Publish
+      run: dotnet publish --configuration Release --no-build --no-restore -o ./publish
+
+    # 6. آپلود فایل‌ها به سرور Plesk از طریق FTP
+    - name: Upload to Plesk via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}  # آدرس سرور FTP
+        username: ${{ secrets.FTP_USERNAME }}  # نام کاربری FTP
+        password: ${{ secrets.FTP_PASSWORD }}  # رمز عبور FTP
+        local-dir: ./publish/  # پوشه‌ای که فایل‌های پابلیش‌شده توش هستند
+        server-dir: /httpdocs/  # مسیر روی سرور Plesk (مثلاً httpdocs)
+        exclude: |
+          **/uploads/**  # پوشه آپلودها رو نادیده بگیر تا حذف نشن
