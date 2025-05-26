@@ -1,0 +1,46 @@
+﻿@model Kids.DTO.RegisterDTO
+@{
+    ViewData["Title"] = "ثبت نام ";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<<div class="Register-Container">
+    <h5>ثبت نام کودک</h5>
+    <div class="Register">
+        <div class="Register-Title">
+            <img src="images/logo.png" alt=""><br>
+ 
+        </div>
+        <div class="Form-Input-Container">
+            <form id="registerForm" asp-controller="Account" asp-action="Register" method="post">
+                @{
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All" class="DangerAlert"></div>
+                    }
+                }
+                <div class="Input-Container">
+                    <label for=""><i class="fa-solid fa-user"></i> نام و نام خانوادگی کودک:</label>
+                    <input type="text" name="FullName" asp-for="FullName">
+                </div>
+                <div class="Input-Container">
+                    <label for=""><i class="fa-solid fa-phone"></i>شماره تماس پدر یا مادر :</label>
+                    <input type="number" name="PhoneNumber" asp-for="PhoneNumber">
+                </div>
+                <div class="Input-Container">
+                    <label for=""><i class="fa-solid fa-lock"></i>رمز عبور:</label>
+                    <input type="password" name="Password" asp-for="Password">
+                </div>
+                <input type="submit" class="OK" value="ثبت نام">
+            </form>
+      
+            <div class="Form-Link">
+                <a href="/Login">حساب کاربری دارید؟ ورود</a>
+            </div>
+        </div>
+   
+    </div>
+</div>
+
+
+

@@ -1,0 +1,23 @@
+﻿@model IEnumerable<AgeGroup>
+
+<div class="Age-Container">
+    <h5>رده سنی را مشخص کنید </h5>
+    @{
+        if (Model.Any())
+        {
+            foreach (var VARIABLE in Model)
+            {
+                <a href="/Course/Archive?AgeGroups=@VARIABLE.Id">
+                    <div class="Age">
+                        <img src="/uploads/Agegroups/@VARIABLE.ImageAddress" alt="">
+                        <span class="Age-Title">@VARIABLE.AgeName</span>
+
+                    </div>
+                </a>
+            }
+        }
+    }
+  
+  
+
+</div>

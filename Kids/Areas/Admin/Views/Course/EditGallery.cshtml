@@ -1,0 +1,57 @@
+﻿@model EditGalleryDTO
+@{
+    ViewData["Title"] = "EditGallery";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ویرایش تصویر</h1>
+
+
+<form action="/Admin/Course/EditGallery" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <input type="hidden" asp-for="ImageAddrress" value="@Model.ImageAddrress" />
+        <label class="form-label">توضیحات :</label>
+        <br />
+        <span asp-validation-for="ImageTitle"></span>
+        <input asp-for="ImageTitle" value="@Model.ImageTitle" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+
+        <label class="form-label"> تصویر :</label>
+        <br />
+        <span asp-validation-for="ImageAddrress"></span>
+
+        <input name="ImageUpload" id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+    </div>
+    <div class="mb-3">
+        <img id="imagePreview" src="/uploads/Gallery/@Model.ImageAddrress" alt="تصویر انتخاب ‌شده" style="max-width: 200px; border: 1px solid #ddd; padding: 5px;">
+    </div>
+
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-warning" value="ویرایش">
+        <a href="/Admin/Course/CourseGallery/@ViewBag.Id" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById("imagePreview");
+            img.src = reader.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

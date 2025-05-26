@@ -1,0 +1,88 @@
+﻿@using Kids.Services
+@model Kids.DTO.ShowUserInformationDTO
+@{
+    ViewData["Title"] = "پروفایل کاربر";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<div class="DashBoard-Container">
+   
+    <div class="DashBoard-Left">
+        <div class="ProfileInfo">
+            <span> مشخصات کاربری</span>
+            
+            <ul class="Profile-List">
+                
+                <li> <label>نام و نام خانوادگی:</label><span>@Model.Name</span>    </li>
+                <li><label> شماره موبایل  :</label><span>@Model.PhoneNumber</span>    </li>
+                @{
+                    if (Model.Email != null)
+                    {
+                        <li> <label> ایمیل : </label><span>@Model.Email</span> </li>
+                    }
+                    else
+                    {
+                        <li> <label> ایمیل : </label><span>مشخص نشده</span> </li> 
+                    }
+
+                    if (Model.HomeNumber!=null)
+                    {
+                        <li> <label> تلفن : </label><span>@Model.HomeNumber</span> </li>
+                    }
+                    else
+                    {
+                        <li> <label> تلفن : </label><span>مشخص نشده</span> </li>
+                    }
+             
+             
+                    switch (Model.Sex)
+                    {
+                        case true:
+                            <li> <label> جنسیت : </label><span>پسر</span>    </li>
+                            break;
+                        case false:
+                            <li> <label> جنسیت : </label><span>دختر</span>    </li>
+                            break;
+                        case null:
+                            <li> <label> جنسیت : </label><span>مشخص نشده</span>    </li>
+                            break;
+                    }
+             
+        
+                    if (Model.BirthDate!=null)
+                    {
+                        <li> <label> تاریخ تولد : </label><span>@ShamsiService.ToShamsi((DateTime)Model.BirthDate)</span>    </li>
+                    }
+            
+                }
+                <li> <label> تاریخ عضویت : </label><span>@ShamsiService.ToShamsi(Model.CreateDate)</span>    </li>
+            
+            </ul>
+            @{
+                if (Model.ImageAddress!=null)
+                {
+                    <div class="Profile-Imagee">
+                        <img src="/uploads//UserImage/@Model.ImageAddress"/>
+                        <br/>
+                        <a href="/EditProfile">ویرایش اطلاعات</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="Profile-Imagee">
+                        <img src="/images/user.svg"  />
+                        <br/>
+                        <a href="/EditProfile">ویرایش اطلاعات</a>
+                    </div>
+                }
+            }
+        </div>
+
+   
+
+
+
+    </div>
+    <partial name="SideDashBoard"/>
+</div>
+

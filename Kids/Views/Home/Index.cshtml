@@ -1,0 +1,69 @@
+﻿@{
+    ViewData["Title"] = "صفحه اصلی";
+}
+
+@* @await Component.InvokeAsync("Slider") *@
+<section class="hero-video">
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="@Url.Content("~/images/school.mp4")" type="video/mp4" />
+        مرورگر شما از تماشای ویدیو پشتیبانی نمی‌کند.
+    </video>
+    <div class="hero-overlay">
+        <div class="hero-content">
+            <h1>مرکز تخصصی مادر و کودک در تهرانپارس | منطقه 4</h1>
+            <h2>برگزاری دوره‌های تخصصی مادر و کودک و کارگاه‌های کودک‌محور در شرق تهران</h2>
+            <a href="/Course/Archive" class="hero-button">مشاهده دوره‌های آموزشی در تهرانپارس</a>
+        </div>
+    </div>
+</section>
+<div class="Feature-Container">
+    <div class="Feature">
+        <img src="/images/feture.jpg" alt="مراقبت از کودک در بهترین مهدکودک های تهران">
+        <h5>مراقبت از کودک در مادر و کودک</h5>
+        <p>نکات طلایی برای مراقبت از نوزاد در مهدکودک‌های تهران: تغذیه سالم، خواب راحت و محیط امن.</p>
+    </div>
+    <div class="Feature">
+        <img src="/images/kid.jpg" alt="آموزش و بازی در مهدکودک های تهرانپارس">
+        <h5>سرگرمی و آموزش در مادر و کودک</h5>
+        <p>بهترین بازی‌های آموزشی برای رشد مهارت‌های کودک در مهدکودک‌های استاندارد تهران.</p>
+    </div>
+    <div class="Feature">
+        <img src="/images/foood.jpg" alt="تغذیه سالم برای کودکان در مهدکودک">
+        <h5>تغذیه سالم در  مادر و کودک</h5>
+        <p>منوی غذایی سالم برای کودکان در مهدکودک‌های تهران با دستورهای ساده و مقوی.</p>
+    </div>
+    <div class="Feature">
+        <img src="/images/heart.jpg" alt="سلامت روان کودک و مادر در مهدکودک های تهران">
+        <h5>سلامت جسم و روان مادر و کودک</h5>
+        <p>راهکارهای تضمین شده برای سلامت مادر و کودک در مهدکودک‌های برتر تهرانپارس و تهران.</p>
+    </div>
+</div>
+
+@await Component.InvokeAsync("IndexAgeGroups")
+@await Component.InvokeAsync("IndexCourseGroups")
+
+<div class="Masters-Container">
+    <div class="Masters">
+        <h4>دوره‌های تخصصی مادر و کودک در تهرانپارس</h4><br>
+        <a href="/Course/Archive"> مشاهده ‌دوره های مادر و کودک <i class="fa-solid fa-arrow-left"></i></a>
+    </div>
+
+    <div class="Masters2">
+        <h4>کتابخانه آموزشی مادر و کودک</h4><br>
+        <a href="/Article/Archive"> مشاهده مقالات <i class="fa-solid fa-arrow-left"></i></a>
+    </div>
+</div>
+
+<div class="Article-Conatiner">
+    <h3> مقالات مادر و کودک </h3>
+    <span class="CourseGP-subTitle">
+        تخصصی‌ترین مقالات و دوره‌های آموزشی از برترین متخصصان کودک منطقه 4 تهران
+        <br>
+        محتوای اختصاصی طراحی شده برای رشد ذهنی و جسمی کودکان با توجه به نیازهای مادران تهرانپارسی
+    </span>
+    <br>
+    @await Component.InvokeAsync("IndexLastArticle")
+    <br>
+    <a href="/Article/Archive" class="More">مشاهده تمام مقالات </a>
+</div>
+

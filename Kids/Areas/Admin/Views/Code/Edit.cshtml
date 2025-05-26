@@ -1,0 +1,97 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Kids.Models
+@model Kids.Areas.Admin.AdminDTO.EditDiscountCodeDTO
+@{
+    ViewData["Title"] = "ویرایش کد";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ویرایش کد</h1>
+
+<form action="/Admin/Code/Edit" id="myForm" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+        <input type="hidden" value="@Model.Id" asp-for="Id"/>
+        <label class="form-label">نام کد:</label>
+        <br />
+        <span asp-validation-for="CodeName"></span>
+        <input value="@Model.CodeName" asp-for="CodeName" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">مقدار کد:</label>
+        <br />
+        <span asp-validation-for="CodeValue"></span>
+        <input value="@Model.CodeValue" asp-for="CodeValue" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">درصد تخفیف:</label>
+        <br />
+        <span asp-validation-for="DiscountPercent"></span>
+        <input value="@Model.DiscountPercent" asp-for="DiscountPercent" type="number" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">مقدار ثابت  تخفیف:</label>
+        <br />
+        <span asp-validation-for="FixedValue"></span>
+        <input value="@Model.FixedValue" asp-for="FixedValue" type="number" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">تعداد قابل استفاده کد:</label>
+        <br />
+        <span asp-validation-for="MaxUsage"></span>
+        <input value="@Model.MaxUsage" asp-for="MaxUsage" type="number" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">حداقل قیمت برای اثر کردن::</label>
+        <br />
+        <span asp-validation-for="Minimum"></span>
+        <input value="@Model.Minimum" asp-for="Minimum" type="number" class="form-control">
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label">حداکثر قیمت برای اثر کردن::</label>
+        <br />
+        <span asp-validation-for="Maximum"></span>
+        <input value="@Model.Maximum" asp-for="Maximum" type="number" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">تاریخ انقضا کد:</label>
+        <br />
+        <span asp-validation-for="ExpireDate"></span>
+        <input value="@Model.ExpireDate" placeholder="@Model.ExpireDate" id="datePicker" asp-for="ExpireDate" type="date" class="form-control">
+
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">ایا فعال باشد؟ :</label>
+        <br />
+        <span asp-validation-for="IsActive"></span>
+      
+        
+            
+                <input asp-for="IsActive" type="checkbox" />
+            
+        
+        
+    </div>
+    
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-warning" value="ویرایش">
+        <a href="/Admin/Code/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>

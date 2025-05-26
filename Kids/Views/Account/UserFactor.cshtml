@@ -1,0 +1,123 @@
+﻿@using Kids.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<Factor>
+@{
+    ViewData["Title"] = "فاکتور های کاربر";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<div class="DashBoard-Container">
+    
+    <div class="DashBoard-Left">
+        <div class="Container" style="padding-top: 30px!important; overflow: auto;">
+            @if (!Model.Any())
+            {
+                <div class="alert-danger" style="width: 70%; margin: 50px 0px; padding: 20px 50px;">شما هیچ فاکتوری ندارید</div>
+            }
+
+            @{
+                if (Model.Any())
+                {
+                    <table class="ordertable">
+                        <thead>
+                        <tr>
+                            <th>شماره سفارش</th>
+                            <th>تاریخ</th>
+
+                            <th>مبلغ</th>
+                            <th>تخفیف اعمال شده</th>
+                            <th>قیمت نهایی</th>
+                            <th>دوره مربوطه</th>
+                            <th>وضعیت سفارش</th>
+                            <th>کد پیگیری:</th>
+
+                            <th>عملیات</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model)
+                        {
+
+                            <tr>
+                                <td data-title="شماره سفارش">
+                                    <div>@item.Id</div>
+                                </td>
+                                <td data-title="تاریخ">
+                                    <div> @ShamsiService.ToShamsi((DateTime)@item.FactorDate)</div>
+                                </td>
+
+
+
+                                <td data-title="مبلغ دوره">
+                                    <div>@item.Course.BasicPrice?.ToString("#,0.##")  تومان </div>
+                                </td>
+                                <td data-title="تخفیف اعمال شده">
+                                    <div>
+                                        @{
+                                            if (item.DiscountCodeId != null||item.Course.DiscountStatus==true)
+                                            {
+
+
+                                                var DiscountPrice = (item.Course.BasicPrice - item.TotalPrice);
+                                                <span> @DiscountPrice?.ToString("#,0.##") تومان</span>
+
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                                <td data-title="مبلغ نهایی ">
+                                    <div>@item.TotalPrice.ToString("#,0.##") تومان </div>
+                                </td>
+                                <td data-title="دوره مربوطه">
+                                    <div>@item.Course.CourseName  </div>
+                                </td>
+                                <td data-title="وضعیت سفارش">
+                                    @{
+                                        if (item.IsFinally == true)
+                                        {
+                                            <div style="color: #40ca98 !important;">موفق </div>
+                                        }
+                                        else
+                                        {
+                                            <div style="color: red !important;">ناموفق</div>
+                                        }
+                                    }
+                                </td>
+                                <td data-title="کد پیگیری ">
+                                    <div>@item.RefID</div>
+                                </td>
+                                @{
+                                    if (item.IsFinally == true)
+                                    {
+                                        <td data-title="عملیات">
+                                            <a href="/Course/@item.Course.Id/@item.Course.CourseName"/>
+                                                <div style="color: #40ca98"> مشاهده دوره</div>
+                                            
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td data-title="عملیات">
+                                            <a href="/Payment/showFactor/@item.Id">
+                                                    <div style="color: #40ca98">پرداخت فاکتور</div>
+                                            </a>
+                                        </td>
+                                    }
+                                }
+
+                            </tr>
+                        }
+
+
+                        </tbody>
+                    </table>
+                }
+            }
+
+
+        </div>
+    </div>
+    <partial name="SideDashBoard" />
+</div>
+
+

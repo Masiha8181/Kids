@@ -1,0 +1,99 @@
+﻿@font-face {
+    font-family: 'yekan';
+    src: url('/fonts/BYekan.ttf');
+}
+
+
+
+    body {
+    font-family: 'yekan';
+      
+}
+
+.field-validation-error {
+    color: red !important;
+}
+.sidebar {
+    height: 100vh;
+  
+    background: #343a40;
+    color: white;
+    padding-top: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    
+    text-align: center;
+    border-bottom: 1px solid #444;
+    cursor: pointer;
+}
+    .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        width: 100%;
+        display: inline-block;
+        padding: 14px;
+        text-align: right;
+        padding-right: 50px;
+    }
+.sidebar ul li i {
+    padding: 0px 10px;
+    color: pink;
+}
+
+.sidebar ul li:hover {
+    background: #495057;
+}
+
+.content {
+    padding: 20px;
+   
+}
+.SearchUser {
+    display: inline-block;
+    width: 100%;
+    margin: 20px 0px;
+}
+.SearchUser input {
+    outline: none;
+    border: none;
+    width: 50%;
+    background-color:;
+    margin: 10px 0px;   
+
+}
+#userList {
+    display: inline-block;
+    border: 1px solid black;
+    margin: 20px 0px;
+    padding: 20px;
+    width: 100%;
+    border-radius: 20px;
+    text-align: center;
+}
+.user-item {
+    display: inline-block;
+    border: 1px solid black;
+    margin: 20px 10px;
+    padding: 20px;
+    width: 20%;
+    border-radius: 20px;
+    
+}
+.form-group label {
+    display: inline-block;
+    width: 100px;
+    margin-bottom: 20px;
+}
+table td {
+    overflow: auto;
+}
+
+
+
+

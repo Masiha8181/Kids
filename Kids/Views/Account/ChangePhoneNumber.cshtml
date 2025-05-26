@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "ویرایش شماره موبایل";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<div class="DashBoard-Container">
+    
+    <div class="DashBoard-Left">
+        <div class="ProfileInfo">
+            <span>ویرایش شماره موبایل</span>
+
+            <div id="messageBox"></div>
+
+            <form id="SendNewPhoneForm">
+                <div class="Profile-Form" style="text-align: right; width: 90%">
+                    <label><i class="fa-solid fa-phone"></i> شماره موبایل:</label><br />
+                    <input type="number" id="newPhone" name="PhoneNumber" placeholder="شماره موبایل..." style="width: 50%" />
+                    <button type="button" id="sendCodeBtn" class="OK3" style="margin-right: 20px;">ارسال کد</button>
+                    <span class="OldPhone">شماره موبایل قبلی: @ViewBag.PhoneNumber</span>
+                </div>
+            </form>
+
+            <form id="SubmitCodeForm" style="display: none">
+                <div class="Profile-Form" style="text-align: right; width: 90%">
+                    <label><i class="fa-solid fa-phone"></i>کد تایید:</label><br />
+                    <input type="number" id="verifyCode"  placeholder="کد تایید..." style="width: 50%" />
+                    <button type="button" id="verifyCodeBtn" class="OK3" style="margin-right: 20px;">تایید</button>
+                    <button type="button" id="resendCodeBtn" class="OK3" style="margin-right: 20px;">ارسال مجدد</button>
+                    <input type="hidden" id="oldPhoneHidden" name="OldPhoneNumber" value="@ViewBag.PhoneNumber" />
+                    <input type="hidden" id="NewPhoneNumber" name="NewPhoneNumber" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <partial name="SideDashBoard" />
+</div>
+
+<script>
+    function showMessage(message, isSuccess = true) {
+        $("#messageBox").html(`<div class="alert ${isSuccess ? 'alert-success' : 'alert-danger'}">${message}</div>`);
+    }
+
+    // ارسال شماره موبایل
+    $("#sendCodeBtn").on("click", function () {
+        const phone = $("#newPhone").val();
+
+        $.ajax({
+            url: '/SendCode',
+            type: 'POST',
+            data: { phoneNumber: phone },
+            success: function (res) {
+                if (res.success) {
+                    showMessage(res.message, true);
+                    $("#SubmitCodeForm").show();
+                       $("#SendNewPhoneForm").hide();
+                  $("#NewPhoneNumber").val(phone);
+                } else {
+                    showMessage(res.message, false);
+                }
+            },
+            error: function () {
+                showMessage("خطا در ارسال درخواست!", false);
+            }
+        });
+    });
+
+    // تایید کد
+    $("#verifyCodeBtn").on("click", function () {
+        const code = $("#verifyCode").val();
+        const phone = $("#oldPhoneHidden").val();
+           const NewPhoneNumber = $("#NewPhoneNumber").val();
+        $.ajax({
+            url: '/VerifyCode',
+            type: 'POST',
+            data: { code: code, oldPhoneNumber: phone,NewPhoneNumber:NewPhoneNumber },
+            success: function (res) {
+                if (res.success) {
+                    showMessage(res.message, true);
+                    $("#SubmitCodeForm").hide();
+                    $("#SendNewPhoneForm").trigger("reset");
+                } else {
+                    showMessage(res.message, false);
+                }
+            },
+            error: function () {
+                showMessage("خطا در ارسال درخواست!", false);
+            }
+        });
+    });
+
+    // ارسال مجدد
+    $("#resendCodeBtn").on("click", function () {
+        const phone = $("#oldPhoneHidden").val();
+        const newPhone = $("#NewPhoneNumber").val();
+
+        $.ajax({
+            url: '/ResendNewCode',
+            type: 'POST',
+            data: {
+                OldPhoneNumber: phone,
+                NewPhoneNumber: newPhone
+            },
+            success: function (res) {
+                if (res.success) {
+                    showMessage(res.message, true);
+                } else {
+                    showMessage(res.message, false);
+                }
+            },
+            error: function () {
+                showMessage("خطا در ارسال مجدد!", false);
+            }
+        });
+    });
+
+</script>

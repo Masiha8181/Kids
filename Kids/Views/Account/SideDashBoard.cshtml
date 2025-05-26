@@ -1,0 +1,16 @@
+﻿@{
+    var currentPath = Context.Request.Path.Value?.ToLower();
+}
+<div class="DashBoard-Right">
+    <div class="Profile-SideBar">
+        <ul>
+            <li><a href="/DashBoard" class="@(currentPath == "/dashboard" ? "active" : "")"><i class="fa-solid fa-user"></i>پروفایل</a></li>
+            <li><a href="/EditProfile" class="@(currentPath == "/editprofile" ? "active" : "")"><i class="fa-solid fa-user-pen"></i>ویرایش اطلاعات </a></li>
+            <li><a href="/UserCourse" class="@(currentPath == "/usercourse" ? "active" : "")"><i class="fa-solid fa-graduation-cap"></i> دوره های من</a></li>
+            <li><a href="/ChangePhoneNumber" class="@(currentPath == "/changephonenumber" ? "active" : "")"><i class="fa-solid fa-phone"></i>تغییر شماره موبایل</a></li>
+            <li><a href="/ChangePassword" class="@(currentPath == "/changepassword" ? "active" : "")"><i class="fa-solid fa-lock"></i>تغییر رمز عبور</a></li>
+            <li><a href="/UserFactor" class="@(currentPath == "/userfactor" ? "active" : "")"><i class="fa-solid fa-cart-shopping"></i>فاکتور ها</a></li>
+            <li><a href="/Logout"><i class="fa-solid fa-door-open"></i>خروج</a></li>
+        </ul>
+    </div>
+</div>

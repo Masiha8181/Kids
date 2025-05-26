@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = " خطایی رخ داده است";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+       
+        background: url('/images/404.jpg') no-repeat center center fixed;
+        background-size: contain;
+        color: white;
+    }
+    .notfound-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 90vh;
+        text-align: center;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .notfound-container h1 {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        animation: fadeInDown 1s ease-in-out;
+    }
+
+    .notfound-container p {
+        font-size: 1.5rem;
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+
+
+
+
+    .notfound-container p {
+        font-size: 1.2rem;
+    }
+    
+
+
+
+</style>
+
+<div class="notfound-container">
+    <h1>خطایی غیر منتطره رخ داده است</h1>
+    <p>متأسفیم!تیم پشتیبانی این خطا را دریافت کردند ..</p>
+</div>

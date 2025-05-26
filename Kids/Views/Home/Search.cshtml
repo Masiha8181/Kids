@@ -1,0 +1,210 @@
+﻿@using Kids.Services
+@model Kids.DTO.FullSearchDTO
+
+<div class="Tab-Container">
+    <div class="Tab-Header-Container">
+        <h1 style="color: #1e345a; margin-bottom: 30px; padding-right: 30px;">نتایج جستجو برای @ViewBag.KeyWord :</h1>
+        <span class="Tab-Header active" onclick="ActiveTab('CourseTab', this)">دوره‌ها</span>
+        <span class="Tab-Header" onclick="ActiveTab('ArticleTab', this)">مقالات</span>
+    </div>
+@{
+    if (Model!=null)
+    {
+
+            <div class="Tab" id="CourseTab">
+                <div id="CourseList">
+                    <div class="productlist">
+                        @{
+
+                            if (Model.Courses.Any())
+                            {
+                                foreach (var VARIABLE in Model.Courses)
+                                {
+
+                                    <a href="/Course/@VARIABLE.Id/@SlugMacker.GenerateSlug(VARIABLE.CourseName)" style="text-decoration: none;">
+
+                                        <div class="productcard">
+
+                                            <img src="/uploads/@VARIABLE.ImageAddress" alt="">
+                                            <div class="productcard-price">
+                                                <span class="card-title">@VARIABLE.CourseName</span>
+                                                <span class="catcard">@VARIABLE.CourseGroup.GroupName</span>
+                                                <p style="display: inline-block; width: 90%; text-align: justify; height: 130px;color: #1e345a"> @VARIABLE.ShortDescription</p>
+                                                @{
+                                                    if (VARIABLE.DiscountStatus == true && VARIABLE.DiscountPercent > 0)
+                                                    {
+                                                        <span class="DiscountCard">تخفیف :@VARIABLE.BasicPrice?.ToString("#,0.##") تومان</span>
+                                                    }
+                                                }
+                                                @{
+                                                    if (VARIABLE.IsFree == true || VARIABLE.BasicPrice <= 0 || VARIABLE.TotalPrice <= 0)
+                                                    {
+                                                        <span class="card-price">رایگان</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="card-price">@VARIABLE.TotalPrice?.ToString("#,0.##") تومان</span>
+                                                    }
+                                                }
+
+
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                }
+                            }
+
+                        }
+
+                    </div>
+                    <div style="text-align: center">
+                        <button class="MoreBTN" onclick="LoadMoreCourses()" id="CourseLoadBtn">بارگذاری بیشتر دوره‌ها</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="Tab Disable-Tab" id="ArticleTab">
+                <div id="ArticleList">
+                    <div class="productlist" id="Article">
+                        @{
+
+                            @if (Model.Articles.Any())
+                            {
+
+                                foreach (var VARIABLE in Model.Articles)
+                                {
+
+                                    <a href="/Article/@VARIABLE.Id/@SlugMacker.GenerateSlug(VARIABLE.ArticleName)" style="text-decoration: none;">
+
+                                        <div class="productcard">
+
+                                            <img src="/uploads/Article/@VARIABLE.ImageAddress" alt="">
+                                            <div class="productcard-price">
+                                                <span class="card-title">@VARIABLE.ArticleName</span>
+                                                <span class="catcard">@VARIABLE.ArticleGroup.GroupName</span>
+                                                <p style="display: inline-block; width: 90%; text-align: justify; height: 130px;color: #1e345a"> @VARIABLE.ShortDescription</p>
+
+
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                }
+                            }
+
+                        }
+                    </div>
+                </div>
+                <div style="text-align: center">
+                    <button class="MoreBTN" onclick="LoadMoreArticles()" id="ArticleLoadBtn">بارگذاری بیشتر مقالات</button>
+                </div>
+            </div>
+    }
+}
+</div>
+
+
+
+<script>
+    let coursePage = 0;
+    let articlePage = 0;
+    let keyword = '@Html.Raw(ViewBag.KeyWord ?? "")';
+
+    function ActiveTab(tabId, element) {
+        $(".Tab").addClass("Disable-Tab");
+        $(".Tab-Header").removeClass("active");
+        $("#" + tabId).removeClass("Disable-Tab");
+        $(element).addClass("active");
+    }
+        function generateSlug(str) {
+        return str.toLowerCase()
+            .trim()
+            .replace(/[\u064B-\u0652]/g, '') // حذف حرکات عربی
+            .replace(/\s+/g, '-') // جایگزینی فاصله با -
+            .replace(/[^\w\u0600-\u06FF\-]+/g, '') // حذف کاراکترهای غیرمجاز (فقط حروف و اعداد و فارسی)
+            .replace(/\-+/g, '-'); // حذف -های تکراری
+    }
+
+      function LoadMoreCourses() {
+        coursePage++;
+        $.getJSON(`/Search`, {
+            KeyWord: keyword,
+            CourseLoadID: coursePage,
+            ArticleLoadID: 0
+        })
+        .done(function (data) {
+            let courses = data; // ✅ چون مستقیماً لیست دوره‌ها برمی‌گرده
+
+            if (courses.length === 0) {
+                toastr.info('تمامی دوره ها بارگزاری شده اند')
+                $("#CourseLoadBtn").hide();
+                return;
+            }
+
+            courses.forEach(function (item) {
+                 let slug = generateSlug(item.courseName);
+                let html = `
+                    <a href="/Course/${item.id}/${slug}" style="text-decoration: none;">
+                        <div class="productcard">
+                            <img src="/uploads/${item.imageAddress}" alt="">
+                            <div class="productcard-price">
+                                <span class="card-title">${item.courseName}</span>
+                                <span class="catcard">${item.courseGroup?.groupName ?? ''}</span>
+                                <p style="display: inline-block; width: 90%; text-align: justify; height: 130px;color: #1e345a">${item.shortDescription}</p>
+                                ${item.discountStatus && item.discountPercent > 0 ? `<span class="DiscountCard">تخفیف :${item.basicPrice?.toLocaleString('fa-IR')} تومان</span>` : ''}
+                                ${item.isFree || item.basicPrice <= 0 || item.totalPrice <= 0
+                                    ? `<span class="card-price">رایگان</span>`
+                                    : `<span class="card-price">${item.totalPrice?.toLocaleString('fa-IR')} تومان</span>`}
+                            </div>
+                        </div>
+                    </a>`;
+                $("#CourseList .productlist").append(html);
+            });
+        })
+        .fail(function() {
+             toastr.error("خطا در دریافت اطلاعات دوره‌ها");
+        });
+    }
+
+
+       function LoadMoreArticles() {
+        articlePage++;
+        $.getJSON(`/Search`, {
+            KeyWord: keyword,
+            CourseLoadID: 0,
+            ArticleLoadID: articlePage
+        })
+        .done(function (data) {
+            let articles = data; // چون خودش لیست مقالاته
+
+            if (articles.length === 0) {
+                $("#ArticleLoadBtn").hide();
+                      toastr.info('تمامی مقالات بارگزاری شده اند')
+                return;
+            }
+
+            articles.forEach(function (item) {
+                 let slug = generateSlug(item.ArticleName);
+                let html = `
+                    <a href="/Article/${item.id}/${slug}" style="text-decoration: none;">
+                        <div class="productcard">
+                            <img src="/uploads/Article/${item.imageAddress}" alt="">
+                            <div class="productcard-price">
+                                <span class="card-title">${item.articleName}</span>
+                                <span class="catcard">${item.articleGroupName ?? ''}</span>
+                                <p style="display: inline-block; width: 90%; text-align: justify; height: 130px;color: #1e345a">${item.shortDescription}</p>
+                            </div>
+                        </div>
+                    </a>`;
+                $("#ArticleList .productlist").append(html);
+            });
+        })
+        .fail(function() {
+            toastr.error("خطا در دریافت اطلاعات مقالات");
+        });
+    }
+
+</script>
+

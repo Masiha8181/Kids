@@ -1,0 +1,85 @@
+﻿@model Kids.Areas.Admin.AdminDTO.CreateSliderDTO
+@{
+    ViewData["Title"] = "ایجاد اسلایدر";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ایجاد اسلایدر</h1>
+
+
+<form action="/Admin/Slider/Create" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"]!=null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+       
+        <label class="form-label">عنوان :</label>
+        <br/>
+        <span asp-validation-for="Title"></span>
+        <input asp-for="Title" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+        
+     
+        <label class="form-label"> تصویر :</label>
+        <br />
+        <span asp-validation-for="ImageAddress"></span>
+        <input asp-for="ImageAddress" id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+    </div>
+    <div class="mb-3">
+        <img id="imagePreview" src="" alt="تصویر انتخاب‌شده" style="max-width: 200px; display: none; border: 1px solid #ddd; padding: 5px;">
+    </div>
+
+    <div class="mb-3">
+        
+        <label class="form-label"> توضیحات  :</label>
+        <br/>
+        <span asp-validation-for="Descreption"></span>
+        <input asp-for="Descreption" type="text" class="form-control">
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label"> آدرس لینک  :</label>
+        <br />
+        <span asp-validation-for="Linkhref"></span>
+        <input asp-for="Linkhref" type="text" class="form-control">
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label"> متن لینک  :</label>
+        <br />
+        <span asp-validation-for="LinkText"></span>
+        <input asp-for="LinkText" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label"> فعال باشد؟   :</label>
+        <br />
+        <span asp-validation-for="IsActive"></span>
+        <input asp-for="IsActive" type="checkbox">
+    </div>
+    <div class="mb-3">
+
+        <input type="submit"  class="btn btn-success" value="ایجاد">
+        <a href="/Admin/Slider/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById("imagePreview");
+            img.src = reader.result;
+            img.style.display = "block"; 
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

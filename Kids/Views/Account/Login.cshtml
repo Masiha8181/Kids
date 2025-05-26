@@ -1,0 +1,45 @@
+﻿
+@model Kids.DTO.LoginDTO
+@{
+    ViewData["Title"] = " ورود ";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<<div class="Register-Container">
+    <h5>ورود به سایت</h5>
+    <div class="Register">
+        <div class="Register-Title">
+            <img src="images/logo.png" alt=""><br>
+
+        </div>
+        <div class="Form-Input-Container">
+            <form id="registerForm" asp-controller="Account" asp-action="Login" method="post">
+                @{
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All" class="DangerAlert"></div>
+                    }
+                }
+              
+                <div class="Input-Container">
+                    <label for=""><i class="fa-solid fa-phone"></i>شماره موبایل :</label>
+                    <input type="number" name="PhoneNumber" asp-for="PhoneNumber">
+                </div>
+                <div class="Input-Container">
+                    <label for=""><i class="fa-solid fa-lock"></i>رمز عبور:</label>
+                    <input type="password" name="Password" asp-for="Password">
+                </div>
+                <input type="submit" class="OK" value=" ورود">
+            </form>
+
+            <div class="Form-Link">
+                <a href="/Register">حساب کاربری ندارید؟ ثبت نام</a><br/>
+                <a href="/LoginWithCode"> ورود بدون رمز عبور  </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+

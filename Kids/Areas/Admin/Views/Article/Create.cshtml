@@ -1,0 +1,187 @@
+﻿@using Kids.Models
+@model Kids.Areas.Admin.AdminDTO.CreateArticleDTO
+@{
+    ViewData["Title"] = "ایجاد مقاله";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ایجاد مقاله</h1>
+<script src="ckeditor/"></script>
+
+<form action="/Admin/Article/Create" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+
+        <label class="form-label">نام مقاله:</label>
+        <br />
+        <span asp-validation-for="ArticleName"></span>
+        <input asp-for="ArticleName" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+
+        <label class="form-label"> تصویر مقاله:</label>
+        <br />
+        <span asp-validation-for="ImageAddress"></span>
+        <input asp-for="ImageAddress" id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+    </div>
+    <div class="mb-3">
+        <img id="imagePreview" src="" alt="تصویر انتخاب‌شده" style="max-width: 200px; display: none; border: 1px solid #ddd; padding: 5px;">
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label"> توضیحات کوتاه :</label>
+        <br />
+        <span asp-validation-for="ShortDescription"></span>
+        <input asp-for="ShortDescription" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label"> توضیحات اصلی :</label>
+        <br />
+        <span asp-validation-for="FullDescription"></span>
+        <textarea asp-for="FullDescription" style="height: 400px!important;resize: none!important" class="form-control" id="FullDescription"></textarea>
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">  تگ ها با - جدا کنید :</label>
+        <br />
+        <span asp-validation-for="Tags"></span>
+        <input asp-for="Tags" type="text" class="form-control">
+    </div>
+    
+    <div class="mb-3">
+
+        <label class="form-label"> آیا فعال باشد؟ :</label>
+        <br />
+        <span asp-validation-for="IsActive"></span>
+        <input asp-for="IsActive" type="checkbox" class="checkbox">
+    </div>
+    
+    <div class="mb-3">
+
+        <label class="form-label"> گروه مقاله :</label>
+        <br />
+        <span asp-validation-for="ArticleGroupId"></span>
+        <select asp-for="ArticleGroupId" class="form-select">
+            <option value="">---- انتخاب ----</option>
+            @{
+                foreach (var item in ViewBag.Groups)
+                {
+                    <option value="@item.Id">@item.GroupName</option>
+                }
+            }
+        </select>
+    </div>
+  
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-success" value="ایجاد">
+        <a href="/Admin/Article/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById("imagePreview");
+            img.src = reader.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+<script src="/Js/CustomConfig.js"></script>
+<script>
+     CKEDITOR.replace('FullDescription', {
+      customConfig: '/js/CustomConfig.js',
+       filebrowserUploadOnSave: true ,
+         filebrowserBrowseUrl: '/uploads/',
+      filebrowserImageBrowseUrl: '/uploads/',
+      filebrowserUploadUrl: '/Admin/Upload/UploadImage',
+     
+      removeButtons: 'PasteFromWord'
+    });
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
+<script>
+    
+    $(document).ready(function () {
+        // بررسی اولیه هنگام لود صفحه
+        togglePrice();
+        toggleDiscount();
+
+        // وقتی کاربر تیک قیمت رو می‌زنه
+        $('#PriceCheck').change(function () {
+            togglePrice();
+        });
+
+        // وقتی کاربر تیک تخفیف رو می‌زنه
+        $('#DiscountCheck').change(function () {
+            toggleDiscount();
+        });
+
+        function togglePrice() {
+            if ($('#PriceCheck').is(':checked')) {
+                $('#PriceDIV').slideUp();
+            } else {
+                $('#PriceDIV').slideDown();
+            }
+        }
+
+        function toggleDiscount() {
+            if ($('#DiscountCheck').is(':checked')) {
+                $('#DiscountDIV').slideDown();
+            } else {
+                $('#DiscountDIV').slideUp();
+            }
+        }
+    });
+
+
+       // تابع تبدیل تاریخ میلادی به شمسی با استفاده از jalaali-js
+    function toShamsi(miladiDate) {
+        const miladi = miladiDate.split('-');
+        const date = new Date(miladi[0], miladi[1] - 1, miladi[2]);
+
+        const jalaaliDate = jalaali.toJalaali(date.getFullYear(), date.getMonth() + 1, date.getDate());
+        return `${jalaaliDate.jy}/${jalaaliDate.jm}/${jalaaliDate.jd}`;
+    }
+
+    // وقتی تاریخ میلادی در input 1 تغییر می‌کند
+    document.getElementById('miladi-date1').addEventListener('change', function () {
+        const miladiDate1 = this.value; // تاریخ میلادی 1 انتخاب‌شده
+        if (miladiDate1) {
+            const shamsiDate1 = toShamsi(miladiDate1); // تبدیل به تاریخ شمسی 1
+            document.getElementById('shamsi-date1').textContent = `تاریخ شمسی: ${shamsiDate1}`; // نمایش تاریخ شمسی 1 در span
+        }
+    });
+
+    // وقتی تاریخ میلادی در input 2 تغییر می‌کند
+    document.getElementById('miladi-date2').addEventListener('change', function () {
+        const miladiDate2 = this.value; // تاریخ میلادی 2 انتخاب‌شده
+        if (miladiDate2) {
+            const shamsiDate2 = toShamsi(miladiDate2); // تبدیل به تاریخ شمسی 2
+            document.getElementById('shamsi-date2').textContent = `تاریخ شمسی: ${shamsiDate2}`; // نمایش تاریخ شمسی 2 در span
+        }
+    });
+        document.getElementById('miladi-date3').addEventListener('change', function () {
+        const miladiDate3 = this.value; // تاریخ میلادی 2 انتخاب‌شده
+        if (miladiDate3) {
+            const shamsiDate3 = toShamsi(miladiDate3); // تبدیل به تاریخ شمسی 2
+            document.getElementById('shamsi-date3').textContent = `تاریخ شمسی: ${shamsiDate3}`; // نمایش تاریخ شمسی 2 در span
+        }
+    });
+    
+</script>
+    

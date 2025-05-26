@@ -1,0 +1,188 @@
+﻿@using Kids.Services
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<UserCourse>
+@{
+    ViewData["Title"] = "لیست دوره های کاربر";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<style>
+    .MyCourse-Container {
+        padding: 20px;
+    }
+
+    .MyCourse {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+        direction: rtl;
+        text-align: right;
+        
+    }
+
+        .MyCourse img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            max-height: 300px;
+        }
+
+        .MyCourse h5 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .MyCourse p {
+            font-size: 15px;
+            color: #666;
+            margin: 20px 0px;
+            display: inline-block;
+        }
+
+        .MyCourse ul {
+            padding-right: 20px;
+            color: #444;
+        }
+
+    .episode {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin-top: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .episode-header {
+        background: #1e345a;
+        padding: 15px 20px;
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        font-size: 16px;
+    }
+
+        .episode-header:hover {
+            background: #15243d;
+        }
+
+    .episode-content {
+        padding: 15px 20px;
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+        .episode-content.open {
+            display: block;
+        }
+
+    .episode-buttons {
+        margin: 20px 0px;
+        display: flex;
+        gap: 10px;
+    }
+
+        .episode-buttons a {
+            text-decoration: none;
+            background: #4caf50;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+
+            .episode-buttons a:hover {
+                background: #388e3c;
+            }
+
+  
+
+    
+</style>
+
+<div class="DashBoard-Container">
+
+    <div class="DashBoard-Left">
+        <div class="MyCourse-Container">
+            <span class="Profile-Main-Title">دوره های من</span>
+            @{
+                if (!Model.Any())
+                {
+                    <div class="alert alert-danger" style="background-color: #FFF3CD;color: #8D6604">شما در هیچ دوره ای شرکت نکردید</div>
+                }
+            }
+            @foreach (var items in Model)
+            {
+                <div class="MyCourse">
+                    <img src="/Uploads/@items.Course.ImageAddress "/>
+                    <h5>@items.Course.CourseName</h5>
+                    <p>@items.Course.ShortDescription</p>
+                    <ul>
+                        <li>مدرس دوره :@items.Course.Master.MasterFullName</li>
+
+                        <li>تعداد جلسات دوره : @items.Course.NumberOfSessions</li>
+                        @if (items.Course.DateStart != null)
+                        {
+                            <li>تاریخ شروع دوره:@ShamsiService.ToShamsi((DateTime)@items.Course.DateStart)</li>
+                        }
+                        @if (items.Course.DateEnd != null)
+                        {
+                            <li>تاریخ پایان دوره:@ShamsiService.ToShamsi((DateTime)@items.Course.DateEnd)</li>
+                        }
+                        <li>وضعیت دوره :
+                            @{
+                                string selectedText = items.Course.Status switch
+                                {
+                                    Course.StatusCourse.Ended => "پایان یافته",
+                                    Course.StatusCourse.InProgress => "در حال برگزاری",
+                                    Course.StatusCourse.NotStarted => "در انتظار شروع",
+                                    Course.StatusCourse.Regstering => "در حال ثبت نام"
+                                    };
+                                @selectedText
+                            }
+                        </li>
+                    </ul>
+                    @{
+                        if (items.Course.Episodes.Any())
+                        {
+                            <div id="episodes">
+                                @foreach (var episodeitems in items.Course.Episodes)
+                                {
+
+                                    <div class="episode">
+                                        <div class="episode-header" onclick="toggleEpisode(this)">
+                                            @episodeitems.Title
+                                            <i class="fa-solid fa-angle-down"></i>
+                                        </div>
+                                        <div class="episode-content">
+                                            <p>@episodeitems.Description</p>
+                                            <div class="episode-buttons">
+
+                                                <a href="/Download/DownloadFile/@episodeitems.Id"> دانلود <i class="fa-solid fa-download"></i></a> <span>حجم فایل @($"{(episodeitems.FileSize / 1024.0 / 1024.0):0.##} مگابایت")</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <partial name="SideDashBoard" />
+</div>
+
+<script>
+    function toggleEpisode(header) {
+        const content = header.nextElementSibling;
+        content.classList.toggle("open");
+    }
+</script>

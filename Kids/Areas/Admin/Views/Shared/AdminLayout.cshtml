@@ -1,0 +1,80 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Admin Panel</title>
+    <link href="/fontawesome/css/all.css" rel="stylesheet" />
+    <link href="/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/lib/bootstrap/dist/js/bootstrap.min.js" rel="stylesheet">
+    <link href="/lib/jquery/dist/jquery.min.js" rel="stylesheet">
+    <link href="/lib/jquery-validation/dist/jquery.validate.min.js" rel="stylesheet">
+    <link href="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" rel="stylesheet">
+    <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <link href="/Admin/Css/style.css" rel="stylesheet"/>
+ <script src="/Js/CustomConfig.js"></script>
+    <script src="/ckeditor/ckeditor.js"></script>
+    <script src="/ckfinder/ckfinder.js>"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker/dist/css/persian-datepicker.min.css">
+    <!-- لود jQuery -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker/dist/css/persian-datepicker.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <!-- داخل <head> -->
+    <link rel="stylesheet" href="/JalaliDatePicker-main/JalaliDatePicker-main/dist/jalalidatepicker.min.css">
+    <script src="/JalaliDatePicker-main/JalaliDatePicker-main/dist/jalalidatepicker.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+
+        body {
+            font-family: 'yekan';
+        }
+        </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar" >
+            <ul class="nav flex-column">
+                <li class="nav-item"><a href="/Admin/home/index"><i class="fa-solid fa-house"></i>داشبورد</a></li>
+                <li class="nav-item"><a href="/Admin/Slider/index"><i class="fa-solid fa-image"></i>اسلایدر</a></li>
+                <li class="nav-item"><a href="/Admin/Course/index"><i class="fa-solid fa-graduation-cap"></i>دوره ها</a></li>
+                    <li class="nav-item"><a href="/Admin/Users/index"><i class="fa-solid fa-users"></i>کاربران</a></li>
+                    <li class="nav-item"><a href="/Admin/Masters/index"><i class="fa-solid fa-pen"></i>مدرسین</a></li>
+                    <li class="nav-item"><a href="/Admin/Groups/index"><i class="fa-solid fa-layer-group"></i>گروه ها </a></li>
+                    <li class="nav-item"><a href="/Admin/Code/index"><i class="fa-solid fa-tag"></i>کد تخفیف </a></li>
+                    <li class="nav-item"><a href="/Admin/AgeGroup/index"><i class="fa-solid fa-baby-carriage"></i> رده سنی</a></li>
+                    <li class="nav-item"><a href="/Admin/ArticleGroup/index"><i class="fa-solid fa-icons"></i> گروه مقاله</a></li>
+                    <li class="nav-item"><a href="/Admin/Article/index"> <i class="fa-solid fa-newspaper"></i> مقاله</a></li>
+                    <li class="nav-item"><a href="/Admin/Factors/index"><i class="fa-solid fa-cart-shopping"></i> فاکتورها</a></li>
+                <li class="nav-item"><a href="/Admin/Comment/index"><i class="fa-solid fa-comments"></i> نظرات</a></li>
+                <li class="nav-item"><a href="/Admin/Messege/index"><i class="fa-solid fa-inbox"></i> پیام ها</a></li>
+                <li class="nav-item"><a href="/logout"><i class="fa-solid fa-door-open"></i>خروج</a></li>
+            </ul>
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
+            
+            @RenderBody()
+        </main>
+    </div>
+</div>
+
+</body>
+</html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+         if (typeof CKEDITOR !== 'undefined') {
+             CKEDITOR.replace('FullDescription');
+         } else {
+             console.error("CKEditor لود نشده!");
+         }
+     });
+
+     
+</script>

@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewData["Title"] = "اضافه کردن کاربر به دوره";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>اضافه کردن کاربر به دوره @ViewBag.Course</h1>
+<a href="/Admin/Course" class="btn btn-dark">بازگشت</a>
+<div class="SearchUser">
+    <input type="text" class="form-control " id="mobileInput" placeholder="شماره تلفن را وارد کنید">
+    <button class="btn btn-primary" onclick="searchUser()">جستجو</button>
+</div>
+<div id="messageBox" style="display: none; padding: 10px; margin-top: 10px; border-radius: 5px;"></div>
+<div id="userInfo" style="display: none;">
+    <h3>لیست کاربران یافت شده:</h3>
+    <div id="userList"></div>
+</div>
+
+
+
+<script>
+    let courseId = @ViewBag.CourseId; // مقداردهی درست courseId
+
+    function searchUser() {
+        let mobile = document.getElementById("mobileInput").value;
+
+        fetch(`/admin/Users/GetUserByMobile?mobile=${mobile}`)
+            .then(response => response.json())
+            .then(users => {
+                let userListContainer = document.getElementById("userList");
+                userListContainer.innerHTML = ""; // لیست رو خالی کن برای هر جستجو
+
+                if (users.length === 0) {
+                    showMessage("کاربری یافت نشد", "danger");
+                    return;
+                }
+
+                users.forEach(user => {
+                    let userItem = document.createElement("div");
+                    userItem.classList.add("user-item");
+                    userItem.innerHTML = `
+                        <p>نام: ${user.name} 
+                        <p>شماره: ${user.phoneNumber}</p>
+                        <button class="btn btn-success" onclick="addUserToCourse(${user.id}, ${courseId})">اضافه کردن</button>
+                    `;
+                    userListContainer.appendChild(userItem);
+                });
+
+                document.getElementById("userInfo").style.display = "block";
+            })
+            .catch(() => showMessage("خطایی رخ داد", "danger"));
+    }
+
+    function addUserToCourse(userId, courseId) {
+        if (!userId || !courseId) {
+            showMessage("شناسه کاربر یا دوره معتبر نیست", "warning");
+            return;
+        }
+
+        fetch(`/admin/Course/AddUserToCourse`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: userId, courseId: courseId })
+        })
+        .then(response => response.json())
+        .then(result => {
+            showMessage(result.message, "success");
+        })
+        .catch(() => showMessage("خطایی رخ داد", "danger"));
+    }
+
+    function showMessage(message, type) {
+        let messageBox = document.getElementById("messageBox");
+        messageBox.innerText = message;
+        messageBox.style.display = "block";
+
+        if (type === "success") {
+            messageBox.style.backgroundColor = "#d4edda";
+            messageBox.style.color = "#155724";
+            messageBox.style.border = "1px solid #c3e6cb";
+        } else if (type === "warning") {
+            messageBox.style.backgroundColor = "#fff3cd";
+            messageBox.style.color = "#856404";
+            messageBox.style.border = "1px solid #ffeeba";
+        } else if (type === "danger") {
+            messageBox.style.backgroundColor = "#f8d7da";
+            messageBox.style.color = "#721c24";
+            messageBox.style.border = "1px solid #f5c6cb";
+        }
+
+        setTimeout(() => {
+            messageBox.style.display = "none";
+        }, 5000); // مخفی کردن پیام بعد از 5 ثانیه
+    }
+</script>
+

@@ -1,0 +1,173 @@
+﻿@using Kids.Services
+@model IEnumerable<Kids.Models.Comment>
+@{
+    ViewData["Title"] = "لیست کامنت ها";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>لیست کامنت ها</h1>
+
+<div class="table-responsive">
+   
+    <table class="table table-striped">
+        <tr>
+
+            <td>نظر </td>
+            <td>تاریخ ایجاد</td>
+            <td> کاربر</td>
+            <td> دوره</td>
+            <td> مقاله</td>
+            <td>وضعیت</td>
+            <td>  عملیات</td>
+        </tr>
+
+        @{
+            foreach (var items in Model)
+            {
+                        <tr id="row-@items.Id">
+                            <td>
+                        @items.CommentText
+                            </td>
+                            <td>
+                      @ShamsiService.ToShamsi(items.CreateTime)
+                            </td>
+                            <td>
+                        @items.User.Name
+                        <br/>
+                   
+                        <br/>
+                        @items.User.PhoneNumber
+                       
+                            </td>
+                            <td>
+                                @{
+                                    if (items.CourseId!=null)
+                                    {
+                                        @items.Course.CourseName
+                                    }
+                                }
+                            </td>
+                            <td>
+                               @{
+                                   if (items.ArticleId!=null)
+                                   {
+                                       @items.Article.ArticleName
+                                   }
+                               }
+                            </td>
+                            <td>
+                       @{if (items.IsApproved == true)
+                       {
+                                <i class="fa-solid fa-check" style="color: green;font-size: 30px"></i>
+                       }
+                         else
+                         {
+                                <i class="fa-solid fa-xmark" style="color: red;font-size: 30px"></i>
+                         }
+                       }
+                            </td>
+                          
+                            <td>
+                       @{
+                           if (items.IsApproved!=true)
+                           {
+                               <a class="btn btn-success Approved-btn" data-id="@items.Id">تایید </a>
+                           }
+                       }
+                                <a href="/Admin/Comment/Edit/@items.Id" class="btn btn-warning">ویرایش</a>
+                                <a class="btn btn-danger delete-btn" data-id="@items.Id">حذف</a>
+                            </td>
+                        </tr>
+            }
+        }
+
+    </table>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let itemId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Comment/DeleteItem/${itemId}`, {
+                            method: "POST"
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("حذف شد!", "آیتم موردنظر حذف شد.", "success");
+                                 document.getElementById(`row-${itemId}`).remove();
+                             // حذف ردیف از جدول
+                            } else {
+                                Swal.fire("خطا!", "حذف انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+<script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".Approved-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let itemId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#28a745",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "بله، تایید شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Comment/Approved/${itemId}`, {
+                            method: "POST"
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("تایید شد!", "کامنت تایید شد.", "success");
+
+                                // تغییر آیکون تأیید به سبز
+                                let row = document.getElementById(`row-${itemId}`);
+                                let statusCell = row.querySelector("td:nth-child(5)");
+                                statusCell.innerHTML = '<i class="fa-solid fa-check" style="color: green;font-size: 30px"></i>';
+
+                                // حذف دکمه‌ی تایید
+                                button.remove();
+                            } else {
+                                Swal.fire("خطا!", "تأیید انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+
+</script>
+

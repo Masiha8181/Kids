@@ -1,0 +1,183 @@
+﻿@model Kids.Models.Factor
+@{
+    ViewData["Title"] = "نمایش فاکتور";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<div class="Factor-Container">
+    <div style="text-align: center; width: 100%;">
+        <div class="Factor-Right">
+            @{
+                if (Model.Course.DiscountStatus == true && Model.Course.DiscountPercent > 0)
+                {
+                    <span class="DiscountCard">@Model.Course.DiscountPercent%</span>
+                }
+            }
+            <img src="/uploads/@Model.Course.ImageAddress" alt="">
+            <a href="/Course/@Model.Course.Id">
+                @Model.Course.CourseName
+            </a><br>
+            <span class="Factor-Master">مدرس دوره : @Model.Course.Master.MasterFullName</span>
+            <br>
+
+            <span class="Factor-MiniPrice">
+
+                @{
+                    if (Model.Course.DiscountStatus == true && Model.Course.DiscountPercent > 0)
+                    {
+                        <span style="color: #e35151;text-decoration: line-through"> @Model.Course.BasicPrice?.ToString("#,0.##") تومان</span>
+                        <br />
+
+                        if (Model.Course.DiscountStatus == true && Model.Course.DiscountPercent > 0)
+                        {
+                            <span style="color: #22c55e"> @Model.Course.TotalPrice?.ToString("#,0.##") تومان </span>
+                        }
+
+                    }
+                    else
+                    {
+                        <span style="color: #22c55e"> @Model.Course.TotalPrice?.ToString("#,0.##") تومان </span>
+                    }
+                }
+            </span>
+
+        </div>
+
+        <div class="Factor-Left">
+            <span class="Factor-Title"> اطلاعات پرداخت </span>
+            @{
+                if (TempData["Cancel"] != null)
+                {
+                    <div class="alert-danger">
+                        @TempData["Cancel"]
+                    </div>
+                }
+            }
+            <div class="Form-Factor-Conatiner">
+                <form id="discountForm">
+                    <label for="discountCode">کد تخفیف</label>
+                    <input type="text" id="discountCode" placeholder="کد تخفیف را وارد کنید">
+                    <input type="hidden" id="factorId" value="@Model.Id"> <!-- مقدار فاکتور -->
+                    <input type="submit" value="اعمال کد">
+                </form>
+            </div>
+            <hr>
+            <div class="Span-Container">
+                <span class="Total">جمع کل</span>
+                <span class="Total-Left" id="originalPrice">@Model.Course.BasicPrice?.ToString("#,0.##") تومان</span>
+            </div>
+            @{
+                @if (Model.DiscountCodeId != null)
+                {
+                    <div class="Span-Container">
+
+                        <span class="Total" style="color: #E35151;"> تخفیف</span>
+                        <span class="Total-Left" style="color: #E35151;" id="discountAmount">
+                            @if (Model.DiscountCode.DiscountPercent != null)
+                            {
+                                @($"{(Model.CourseTotalPrice * Model.DiscountCode.DiscountPercent) / 100:#,0.##} تومان")
+                            }
+                            else if (Model.DiscountCode.FixedValue != null)
+                            {
+                                @($"{Model.DiscountCode.FixedValue:#,0.##} تومان")
+                            }
+
+                        </span>
+
+                    </div>
+
+
+
+
+
+                }
+
+                <div class="Span-Container">
+
+                    <span class="Total" style="color: #E35151;"> تخفیف</span>
+                    <span class="Total-Left" style="color: #E35151;">
+                        @{
+                            if (Model.Course.DiscountStatus == true && Model.Course.DiscountPercent > 0)
+                            {
+                                var discountedPrice = (Model.Course.BasicPrice * Model.Course.DiscountPercent) / 100;
+                                var final = discountedPrice;
+                                <span>@($"{final:#,0.##} تومان")</span>
+                            }
+
+                        }
+
+                    </span>
+
+                </div>
+                if (Model.DiscountCodeId == null)
+                {
+                    <div class="Span-Container">
+                        <span class="Total" style="color: #E35151;"> تخفیف</span>
+                        <span class="Total-Left" style="color: #E35151;" id="discountAmount">0 تومان</span>
+                    </div>
+                }
+
+
+
+            }
+
+            <hr>
+            <div class="Span-Container">
+                <span class="Total" style="color: #22C55E; font-weight: 700;"> مبلغ قابل پرداخت</span>
+                <span class="Total-Left" style="color: #22C55E; font-weight: 700;" id="finalPrice">
+                    @Model.TotalPrice.ToString("#,0.##") تومان
+                </span>
+            </div>
+            <a href="/Payment/NewPayment/@Model.Id" class="Pay"> تکمیل فرایند خرید <i class="fa-solid fa-arrow-left"></i> </a>
+
+            <!-- محل نمایش پیام‌ها -->
+            <div id="discountMessage" style="margin-top: 10px; padding: 10px; display: none;"></div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $("#discountForm").submit(function (e) {
+            e.preventDefault(); // جلوگیری از ارسال فرم به روش سنتی
+
+            var discountCode = $("#discountCode").val();
+            var factorId = $("#factorId").val();
+
+            $.ajax({
+                url: "/Payment/ApplyDiscount",
+                type: "POST",
+                data: { factorId: factorId, discountCode: discountCode },
+                success: function (response) {
+                    if (response.success) {
+                        // نمایش مقدار تخفیف و قیمت جدید
+                        $("#discountAmount").text(response.discountAmount.toLocaleString() + " تومان");
+                        $("#discountPercent").text(response.discountPercent + "%");
+                        $("#finalPrice").text(response.newPrice.toLocaleString() + " تومان");
+
+                        // نمایش پیام موفقیت
+                        $("#discountMessage")
+                            .text("✅ کد تخفیف اعمال شد! مبلغ جدید: " + response.newPrice.toLocaleString() + " تومان")
+                            .css("color", "green")
+                            .slideDown();
+                    } else {
+                        // نمایش پیام خطا
+                        $("#discountMessage")
+                            .text("❌ " + response.message)
+                            .css("color", "red")
+                            .slideDown();
+                    }
+                },
+                error: function () {
+                    $("#discountMessage")
+                        .text("❌ خطا در ارتباط با سرور!")
+                        .css("color", "red")
+                        .slideDown();
+                }
+            });
+        });
+    });
+</script>
+

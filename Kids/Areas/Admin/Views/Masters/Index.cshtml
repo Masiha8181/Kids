@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Kids.Models.Master>
+@{
+    ViewData["Title"] = "لیست مدرسین";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+
+
+<h1>لیست مدرسین</h1>
+<div class="table-responsive">
+    <a href="/Admin/Masters/Create" class="btn btn-success" style="margin: 20px 20px;">ایجاد مدرس</a>
+    <table class="table table-striped">
+        <tr>
+
+            <td>نام مدرس</td>
+            
+           
+            <td>تصویر</td>
+            <td>توضیحات</td>
+            <td>عملیات</td>
+        </tr>
+
+        @{
+            foreach (var items in Model)
+            {
+                <tr id="row-@items.Id">
+                    <td>
+                        @items.MasterFullName
+                    </td>
+                    <td>
+                        <img src="/uploads/@items.ImageAddress" style="max-width: 100px">
+                    </td>
+                    <td>
+                        @items.MasterDescreption
+                    </td>
+                  
+                    <td>
+                        <a href="/Admin/Masters/Edit/@items.Id" class="btn btn-warning">ویرایش</a>
+                        <a  class="btn btn-danger delete-btn" data-id="@items.Id">حذف</a>
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let itemId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Masters/DeleteItem/${itemId}`, {
+                            method: "POST"
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("حذف شد!", "آیتم موردنظر حذف شد.", "success");
+                                 document.getElementById(`row-${itemId}`).remove();
+                             // حذف ردیف از جدول
+                            } else {
+                                Swal.fire("خطا!", "حذف انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+

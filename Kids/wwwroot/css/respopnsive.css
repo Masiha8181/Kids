@@ -1,0 +1,999 @@
+@media only screen and (max-width: 1123px) {
+
+
+    .NavBar-Right {
+        display: none;
+    }
+
+    .NavBar-Left {
+        display: none;
+    }
+
+    .Mobile-Nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        height: 100%;
+    }
+
+    nav {
+        display: inline-block;
+    }
+
+    .Mobile-Burgur-Icon {
+        display: inline-block;
+        padding: 0px 10px;
+    }
+
+        .Mobile-Burgur-Icon i {
+            font-size: 45px;
+            cursor: pointer;
+            color: white;
+            padding: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+    .Mobile-User-Icon {
+        display: inline-block;
+        padding: 0px 20px;
+    }
+
+        .Mobile-User-Icon a {
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+            background-color: #85C0EB;
+            border-radius: 20px;
+            padding: 15px 20px;
+            font-weight: bold;
+            display: inline-block;
+            box-shadow: 0 5px 0 #5A9ECF, 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+            .Mobile-User-Icon a:hover {
+                transform: scale(0.98);
+                box-shadow: 0 3px 0 #5A9ECF, 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+    .Mobile-Logo img {
+        width: 60px;
+        margin-left: 10px;
+    }
+
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 2;
+        transition: transform 0.5s ease;
+    }
+
+    .Logo2 {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+    }
+
+        .Logo2 img {
+            width: 80px;
+            margin-bottom: 50px;
+        }
+
+    #Close {
+        font-size: 40px;
+        color: #5A9ECF;
+        float: left;
+        margin: 15px;
+    }
+
+    .Mobile-Menu form {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+    }
+
+        .Mobile-Menu form input {
+            display: inline-block;
+            width: 80%;
+            background: linear-gradient(145deg, #9AD0F5, #70AADB);
+            /* گرادینت برای حس حجم */
+            text-align: center;
+            border: 4px solid white;
+            border-radius: 25px;
+            outline: none;
+            color: white;
+            font-family: 'koodak';
+            padding: 10px 20px;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            /* افکت سه‌بعدی */
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.5);
+            transition: all 0.2s ease-in-out;
+        }
+
+            /* افکت فشرده شدن هنگام کلیک */
+            .Mobile-Menu form input:active {
+                box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2), inset -2px -2px 5px rgba(255, 255, 255, 0.5);
+                transform: scale(0.98);
+            }
+
+            /* افکت وقتی موس روش میره */
+            .Mobile-Menu form input:hover {
+                background: linear-gradient(145deg, #A5D9FF, #7AB3E0);
+            }
+
+            .Mobile-Menu form input::placeholder {
+                color: white;
+            }
+
+    .Mobile-Menu ul {
+        display: inline-block;
+        width: 90%;
+        text-align: right;
+        padding-right: 40px;
+        list-style: none;
+    }
+
+        .Mobile-Menu ul li {
+            display: inline-block;
+        }
+
+    ul.cute-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: fit-content;
+        width: 80%;
+        margin: 0px auto;
+        text-align: center;
+        border-bottom: 5px solid #1e345a;
+    }
+
+        ul.cute-list li {
+            background-color: #1e345a;
+            color: #fff;
+            font-family: 'koodak', sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0px;
+            padding: 5px 20px;
+            margin: 20px 0px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.5), inset 2px 2px 4px rgba(255, 255, 255, 0.2), inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease-in-out;
+        }
+
+
+
+            ul.cute-list li:hover {
+                transform: scale(1.05);
+                box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.6);
+            }
+
+    .Mobile-Menu ul li a {
+        text-decoration: none;
+        color: white;
+        margin: 5px 0px;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .Mobile-Container {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .panel {
+        display: none;
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+
+        .panel li {
+            text-align: center;
+            background: linear-gradient(145deg, #9AD0F5, #70AADB) !important;
+        }
+
+            .panel li a {
+            }
+
+    .Landing-Right {
+        display: inline-block;
+        width: 100%;
+        float: right;
+    }
+
+    .Landing-Left {
+        display: inline-block;
+        width: 100%;
+        float: left;
+    }
+
+        .Landing-Left img {
+            width: 90%;
+        }
+
+    .Feature {
+        display: inline-block;
+        width: 90%;
+        margin: 20px 0px;
+    }
+
+    .Age {
+        width: 70%;
+        margin: 20px 0px;
+    }
+
+    .CourseGP {
+        display: inline-block;
+        width: 90%;
+        margin: 20px 0px;
+    }
+
+    .CourseGp-Title {
+        font-size: 40px;
+    }
+
+    .CourseGP-subTitle {
+        color: #6C757D;
+        font-size: 20px;
+        display: inline-block;
+        width: 70%;
+    }
+
+    .Masters span {
+        display: inline-block;
+        width: 70%;
+        font-size: 1.3em;
+    }
+
+    .Masters a {
+        font-size: 20px;
+    }
+
+    .Masters2 a {
+        font-size: 20px;
+    }
+
+    .Masters {
+        background-position: top;
+    }
+
+    .Masters2 span {
+        display: inline-block;
+        width: 70%;
+        font-size: 1.3em;
+    }
+
+    .Masters2 {
+        background-position: top;
+    }
+
+    .Article {
+        display: inline-block;
+        width: 89%;
+        margin: 20px 0px;
+        border-radius: 20px;
+        box-shadow: 0 0 40px 0 rgba(119, 132, 157, .2);
+        padding: 20px 10px;
+    }
+
+        .Article p {
+            width: 70%;
+            display: inline-block;
+        }
+
+    .Footer-Div {
+        width: 70%;
+        margin: 20px auto;
+        text-align: center;
+    }
+
+
+    .Footer-Logo {
+        margin: 20px 0px;
+    }
+
+    .Footer-Desc {
+        margin: 20px 0px;
+    }
+
+    #Insta {
+        width: 40px;
+        display: inline-block;
+        margin: 10px 5px;
+    }
+
+    .Footer-Title {
+    }
+
+    footer ul {
+        padding: 0px;
+    }
+
+    footer li {
+        margin: 10px 0px;
+        font-size: 20px;
+    }
+
+    footer i {
+        display: inline-block;
+        margin: 0px 10px;
+    }
+
+    .Register {
+        background-color: white;
+        display: inline-block;
+        width: 90%;
+        border-radius: 20px;
+        box-shadow: 0 0 40px 0 rgba(119, 132, 157, .2);
+    }
+
+    .Desc {
+        width: 85%;
+        margin-bottom: 40px;
+    }
+
+    .Sidebar {
+        clear: both;
+        width: 100%;
+        padding: 0px;
+        text-align: center;
+    }
+
+    .Course-Main {
+        display: inline-block;
+        width: 80%;
+        border-radius: 20px;
+        margin: 0px auto;
+        text-align: center;
+        padding: 20px 20px;
+        margin: 20px 0px;
+    }
+
+        .Course-Main img {
+            width: 90%;
+            float: none;
+        }
+
+        .Course-Main h1 {
+            font-size: 25px;
+            margin: 10px 0px;
+        }
+
+    .Course-Main2 {
+        width: 100%;
+        padding: 0px;
+    }
+
+    .Master {
+        width: 80%;
+        ;
+        margin: 0px auto;
+        margin-bottom: 20px;
+    }
+
+    .Garanty {
+        margin-bottom: 20px;
+        width: 90%;
+    }
+
+    .Course-Main p {
+        width: 80%;
+        text-align: justify;
+        font-size: 15px;
+    }
+
+    .Course-btn-Container {
+        width: 100%;
+    }
+
+        .Course-btn-Container a {
+            width: 90%;
+            float: none;
+            font-size: 1em;
+            padding: 10px 10px;
+        }
+
+        .Course-btn-Container span {
+            width: 40%;
+            font-size: 1em;
+            line-height: 50px;
+            margin-top: 10px;
+            display: inline-block;
+            float: none;
+        margin:20px 0px;;
+            padding: 9px;
+            border-radius: 5px;
+        }
+
+    .Desc {
+        width: 70%;
+        margin: 0px auto;
+        float: none;
+    }
+
+        .Desc p {
+            font-size: 15px;
+        }
+
+        .Desc h2 {
+            font-size: 20px;
+        }
+
+    .Comment-Section {
+        width: 80%;
+        float: none;
+    }
+
+    .Comment-Container textarea {
+        margin-top: 20px;
+        width: 80%;
+    }
+
+    .Comment-Header span {
+        font-size: 15px;
+    }
+
+    .Reply {
+        width: 70px;
+        height: 40px;
+    }
+
+    .Article-Main {
+        display: inline-block;
+        width: 90%;
+        float: none;
+        padding: 20px 0px;
+        text-align: center;
+        border-radius: 20px;
+        box-shadow: 0 0 40px 0 rgba(119, 132, 157, .2);
+        margin: 20px 0px;
+    }
+
+    .Article-SideBar {
+        display: inline-block;
+        width: 90%;
+        text-align: right;
+        float: none;
+        margin: 20px 0px;
+    }
+
+    .DashBoard-Right {
+        width: 100%;
+        float: none;
+        text-align: center;
+        margin: 0px;
+    }
+
+    .DashBoard-Left {
+        width: 100%;
+        float: none;
+        text-align: center;
+        margin: 0px;
+    }
+
+    .Profile-Head {
+        width: 80%;
+        margin: 0px;
+        margin-top: 30px;
+    }
+
+    .Profile-SideBar {
+        width: 80%;
+        margin: 40px 0px;
+    }
+
+    .ProfileInfo {
+        width: 80%;
+        margin: 0px;
+        margin-bottom: 50px;
+    }
+
+    .Profile-Form {
+        display: inline-block;
+        width: 90%;
+        float: none;
+    }
+
+    .ProfileInfo input[type="submit"] {
+        margin-top: 30px;
+        margin-bottom: 10px;
+        width: 90%;
+    }
+
+    .Container {
+        text-align: center;
+    }
+
+        .Container img {
+            float: none;
+            width: 90%;
+            margin-top: 10px;
+        }
+
+        .Container .Course-Main {
+            width: 88%;
+        }
+
+            .Container .Course-Main h1 {
+                font-size: 25px;
+                margin-top: 10px;
+                margin-bottom: 10PX;
+            }
+
+            .Container .Course-Main ul {
+                display: inline-block;
+                width: 100%;
+                list-style: none;
+                padding: 0px !important;
+                margin-bottom: 50px;
+            }
+
+            .Container .Course-Main li {
+                color: #9CA6B6;
+                display: inline-block;
+                width: 90%;
+                font-size: 20px;
+            }
+
+            .Container .Course-Main .Course-btn-Container {
+                width: 100% !important;
+                display: inline-block;
+                text-align: center;
+            }
+
+                .Container .Course-Main .Course-btn-Container a {
+                    width: 90%;
+                    float: none;
+                    width: 80%;
+                    margin-bottom: 20px;
+                }
+
+    .myorder {
+        display: inline-block;
+        width: 90%;
+        padding: 0px;
+    }
+
+    .ordertable {
+        background: #ffffff;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        padding: 20px;
+    }
+
+        .ordertable thead {
+            display: none;
+        }
+
+        .ordertable td {
+            content: attr(data-title);
+            display: inline-block;
+            background: #f9f9f9;
+            width: 100%;
+            color: #6d6d6d;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin: 0px;
+            padding: 0px;
+            background-color: white;
+        }
+
+            .ordertable td::before {
+                content: attr(data-title);
+                width: 120px;
+                float: right;
+                background: #f9f9f9;
+                width: 120px;
+                margin: 0px;
+                padding: 20px 5px;
+                color: #6d6d6d;
+                margin: 0px 10px;
+            }
+
+        .ordertable th {
+            display: none;
+        }
+
+        .ordertable td div {
+            padding: 20px 10px;
+        }
+
+        .ordertable a {
+            display: inline-block;
+            width: 100px;
+        }
+
+        .ordertable tr {
+            display: inline-block;
+            border: none;
+            margin-bottom: 100px;
+            background: #fff;
+            box-shadow: 0px 10px 20px rgb(0 0 0 / 5%);
+            margin-bottom: 35px !important;
+            border-radius: 10px;
+        }
+
+            .ordertable tr:nth-child(even) {
+                background: none;
+            }
+
+    .Factor-Right img {
+        float: none;
+    }
+
+    .Factor-Right {
+        width: 78%;
+        margin: 0px;
+        text-align: center;
+        float: none;
+        margin-bottom: 50px;
+    }
+
+
+    .Factor-Left {
+        width: 90%;
+        margin: 0px;
+        float: none;
+    }
+
+    .Factor-MiniPrice {
+        position: static;
+        float: none;
+        margin-top: 20px;
+    }
+
+    .Pay-Asli {
+        display: inline-block;
+        width: 90%;
+        text-align: center;
+    }
+
+        .Pay-Asli a {
+            padding: 0px;
+            margin: 0px;
+            margin: 10px 0px;
+        }
+
+        .Pay-Asli span {
+            padding: 0px;
+            margin: 0px;
+        }
+
+    .About {
+        width: 80%;
+    }
+
+    .About-Form {
+        display: inline-block;
+        width: 90%;
+    }
+
+    .About-Address {
+        display: inline-block;
+        width: 90%;
+    }
+
+    .listsidebar {
+        display: none;
+    }
+
+    .listcontent {
+        width: 100%;
+    }
+
+    .orderitem {
+    }
+
+    .order-container {
+        overflow-x: scroll;
+        white-space: nowrap;
+    }
+
+    .order {
+        display: inline-block;
+        overflow-x: scroll;
+        white-space: nowrap;
+    }
+
+    .Openfiltermobile {
+        display: inline-block;
+        position: fixed;
+        bottom: 60px;
+        right: 15px;
+        border-radius: 50%;
+        color: white;
+        font-size: 20px;
+        box-shadow: 0px 15px 20px -5px #F45B9A;
+        padding: 20px;
+        z-index: 99;
+        background-color: #F45B9A;
+      
+    }
+
+    .sidebaritemMobile {
+        display: inline-block;
+        width: 90%;
+        text-align: center;
+        background: #fff;
+        box-shadow: 0px 15px 35px -2px rgb(0 0 0 / 5%);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        border-radius: 16px;
+        margin-bottom: 20px;
+    }
+
+        .sidebaritemMobile span {
+            display: inline-block;
+            width: 100%;
+            padding: 10px 0px;
+            border-bottom: 1px solid rgb(193, 193, 193);
+            font-weight: 700;
+            font-size: 18px;
+            color: rgb(44, 44, 44);
+        }
+
+
+
+    #sidebarcheckMobile {
+        display: inline-block;
+        width: 100px;
+        float: left;
+        border: none;
+        outline: none;
+        border-radius: 3px;
+        font-family: 'yekan' !important;
+        margin: 20px 0px;
+        height: 30px;
+        padding: 10px;
+    }
+
+    #checkboxlabelMobile {
+        display: inline-block;
+        width: 200px;
+        float: right;
+        border: none;
+        outline: none;
+        border-radius: 3px;
+        font-family: 'yekan' !important;
+        margin: 20px 0px;
+        height: 30px;
+    }
+
+    .listsidebarMobile #submit2 {
+        font-family: 'Koodak';
+        font-size: 17px;
+        display: inline-block;
+        width: 90%;
+        box-shadow: 0px 20px 35px -15px rgb(242 188 49 / 30%) !important;
+        background-color: #F45B9A;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        height: 40px;
+        margin-bottom: 200px;
+        cursor: pointer;
+    }
+
+        .listsidebarMobile #submit2:hover {
+            background-color: #b39810;
+        }
+
+    .listsidebarMobile {
+        display: none;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        background-color: white;
+        right: 0;
+        text-align: center;
+        height: 100vh;
+        z-index: 100;
+        overflow-y: auto;
+    }
+
+    .CloseFilterMobile {
+        display: inline-block;
+        padding: 30px;
+        font-size: 30px;
+        margin-top: 10px;
+    }
+
+    .productcard {
+        margin: 25px 0px;
+        position: relative;
+        width: 90%;
+    }
+
+    .sidebaritemmobile input[type="text"], .sidebaritemmobile input[type="number"] {
+        display: inline-block;
+        width: 90%;
+        border: none;
+        outline: none;
+        border-radius: 3px;
+        box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+        border: 1px solid #ccc;
+        font-family: 'Koodak' !important;
+        margin: 20px 0px;
+        height: 30px;
+        padding: 10px;
+    }
+
+    .Rate-Container {
+        width: 80%;
+    }
+
+    .Episode-Container {
+        display: inline-block;
+        display: inline-block;
+        width: 80%;
+        float: none;
+        box-shadow: 0 0 40px 0 rgba(119, 132, 157, .2);
+        text-align: justify;
+        padding: 50px 30px;
+        border-radius: 20px;
+        margin: 20px 0px;
+    }
+
+    .Profile-List {
+        display: inline-block;
+        text-align: center;
+        list-style: none;
+        width: 90%;
+        float: none;
+        margin: 0px 0px;
+        padding: 0px;
+    }
+
+        .Profile-List li label {
+            font-size: 20px;
+            color: #1e345a;
+            display: inline-block;
+            width: auto;
+            padding: 0px 10px;
+        }
+
+        .Profile-List li {
+            font-size: 20px;
+            color: #1e345a;
+            display: inline-block;
+            width: 100%;
+        }
+
+            .Profile-List li span {
+                font-size: 17px;
+                color: #4b5a78;
+                display: inline-block;
+                width: auto;
+                padding: 0px 10px;
+            }
+
+    .Profile-Imagee {
+        display: inline-block;
+        width: 90%;
+        text-align: center;
+        float: none;
+    }
+
+        .Profile-Imagee span {
+            font-size: 20px;
+            margin: 10px 0px;
+        }
+
+        .Profile-Imagee img {
+            width: 200px;
+            height: 200px;
+            padding: 20px;
+        }
+
+        .Profile-Imagee a {
+            text-decoration: none;
+            background-color: #22c55e;
+            color: white;
+            padding: 10px 15px;
+            margin: 10px 0px;
+            border-radius: 20px;
+            border-bottom: 5px solid #126e34;
+            display: inline-block;
+        }
+    #newPhone {
+        display: inline-block !important;
+        width: 90% !important;
+    }
+    #sendCodeBtn {
+        display: inline-block !important;
+        width: 90% !important;
+        margin-right: 0px;
+    }
+    #verifyCode {
+        display: inline-block !important;
+        width: 90% !important;
+        margin-right: 0px;
+    }
+    .OK3 {
+        display: inline-block !important;
+        width: 90% !important;
+        margin-right: 0px!important;
+    }
+    .result {
+        display: inline-block;
+        background-color: white;
+        width: 90%;
+        text-align: center;
+        margin-top: 50px;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        height: 600px;
+        border-radius: 20px;
+        margin-bottom: 150px;
+    }
+
+    .icon2 {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        height: 220px;
+        background-color: #E75E5F;
+        background-color: #20E29B;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .icon2 i {
+        font-size: 50px;
+        display: inline-block;
+        line-height: 100px;
+        margin-top: 20px;
+        color: white;
+        font-size: 53px;
+    }
+
+    .icon2 span {
+        display: inline-block;
+        width: 100%;
+        color: white;
+        font-size: 23px;
+        margin-top: 10px;
+    }
+
+    .result p {
+        display: inline-block;
+        color: #717274;
+    }
+
+    .result p {
+        display: inline-block;
+        font-size: 25px;
+        width: 90%;
+        color: #717274;
+    }
+
+
+    .con-suc {
+        display: inline-block;
+        text-align: center;
+        margin: 20px 0px;
+    }
+
+    .con-suc a {
+        display: inline-block;
+        text-decoration: none;
+        color: white;
+        background-color: #20e29b;
+        padding: 10px 20px;
+        margin-top: 20px;
+        border-radius: 20px;
+    }
+    .participated {
+        float: none!important;
+    }
+}

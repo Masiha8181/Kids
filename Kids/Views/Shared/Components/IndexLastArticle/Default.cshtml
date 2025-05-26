@@ -1,0 +1,15 @@
+﻿@using Kids.Services
+@model IEnumerable<Article>
+
+@{
+    foreach (var VARIABLE in Model)
+    {
+        <a href="/Article/@VARIABLE.Id/@SlugMacker.GenerateSlug(VARIABLE.ArticleName)">
+            <div class="Article">
+                <img src="/uploads/Article/@VARIABLE.ImageAddress" alt="@VARIABLE.ArticleName @VARIABLE.ShortDescription">
+                <span class="Title2">@VARIABLE.ArticleName</span>
+<p>@VARIABLE.ShortDescription</p>
+            </div>
+        </a>
+    }
+}

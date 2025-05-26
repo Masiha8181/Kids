@@ -1,0 +1,42 @@
+﻿@model IEnumerable<CourseGroup>
+<div class="CoursesGP-Container">
+    <h2 class="CourseGP-Title">دوره‌های مادر و کودک  </h2>
+    <h3 class="CourseGP-subTitle">
+        تخصصی‌ترین دوره‌های آموزشی مادر و کودک در شرق تهران
+        <br>
+        با برنامه‌های آموزشی متناسب با سن کودک و نیازهای مادران تهرانپارسی
+        <br>
+        بهترین مرکز آموزش مهارت‌های فرزندپروری در منطقه 4 تهران
+    </h3>
+    <br>
+  @{
+    
+        if (Model.Any())
+        {
+            foreach (var VARIABLE in Model)
+            {
+                <div class="CourseGp">
+                    <img src="/uploads/GroupsImage/@VARIABLE.ImageAddress" alt="">
+                    <span class="Title2"> @VARIABLE.GroupName</span>
+             
+                       @if (VARIABLE.Descreption != null)
+                       {
+                           <span class="CourseGP-Desc">
+                               @VARIABLE.Descreption
+                           </span>
+                       }
+              
+
+                    <a href="/Course/Archive?courseGroups=@VARIABLE.Id">مشاهده دوره ها</a>
+
+
+                </div>
+            } 
+        }
+
+    
+  }
+  
+    <br>
+
+</div>

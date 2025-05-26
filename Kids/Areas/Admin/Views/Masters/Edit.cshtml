@@ -1,0 +1,63 @@
+﻿@model Kids.Areas.Admin.AdminDTO.EditMasterDTO
+@{
+    ViewData["Title"] = "ویرایش مدرس";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ویرایش مدرس </h1>
+
+<form action="/Admin/Masters/Edit" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+        <input type="hidden" asp-for="Id" value="@Model.Id"/>
+        <input type="hidden" asp-for="ImageAddress" value="@Model.ImageAddress" />
+        <label class="form-label">نام مدرس:</label>
+        <br />
+        <span asp-validation-for="MasterFullName"></span>
+        <input asp-for="MasterFullName" value="@Model.MasterFullName" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+
+        <label class="form-label"> تصویر مدرس:</label>
+        <br />
+        <span asp-validation-for="ImageAddress"></span>
+      
+        <input name="ImageUpload"   id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+    </div>
+    <div class="mb-3">
+        <img id="imagePreview" src="/uploads/@Model.ImageAddress" alt="تصویر انتخاب ‌شده" style="max-width: 200px; border: 1px solid #ddd; padding: 5px;">
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label"> توضیحات مدرس :</label>
+        <br />
+        <span asp-validation-for="MasterDescreption"></span>
+        <input asp-for="MasterDescreption" value="@Model.MasterDescreption" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-warning" value="ویرایش">
+        <a href="/Admin/Masters/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById("imagePreview");
+            img.src = reader.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

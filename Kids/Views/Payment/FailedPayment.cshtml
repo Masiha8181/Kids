@@ -1,0 +1,28 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = " آموزش تخصصی بلاگری و مدلینگ حجاب – از صفر تا درآمدزایی";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+
+
+
+<div class="" style="text-align: center; ">
+    <div class="result">
+        <div class="icon2" style=" background-color: #E75E5F!important;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span> پرداخت انجام نشد!</span>
+        </div>
+
+        <div class="con-suc"> 
+            <p><strong>کد پیگیری:</strong> @ViewBag.Code</p>
+            <p><strong>مبلغ پرداختی:</strong> @ViewBag.Amount تومان</p>
+            <p><strong>دوره مربوطه:</strong> @ViewBag.CourseName</p>
+           
+            <a href="/Userfactor" class="btn btn-primary">   مشاهده فاکتور ها</a></div>
+    </div>
+</div>

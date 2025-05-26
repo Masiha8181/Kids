@@ -1,0 +1,83 @@
+﻿@using Kids.Models
+@model Kids.Areas.Admin.AdminDTO.CreateGroupsDTO
+@{
+    ViewData["Title"] = "ایجاد گروه";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+
+
+<h1>ایجاد گروه</h1>
+<form action="/Admin/Groups/Create" id="myForm" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+
+        <label class="form-label">نام گروه:</label>
+        <br />
+        <span asp-validation-for="GroupName"></span>
+        <input asp-for="GroupName" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label">توضیحات گروه:</label>
+        <br />
+        <span asp-validation-for="Descreption"></span>
+        <input asp-for="Descreption" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+        @{
+            List<CourseGroup> list = ViewBag.list;
+            <label class="form-label"> زیر مجموعه:</label>
+            <br />
+            <span asp-validation-for="ParentID"></span>
+            <select class="form-select" asp-for="ParentID">
+                <option value="">---- انتخاب ----</option>
+                @{
+                    foreach (var item in list)
+                    {
+                        <option value="@item.Id">@item.GroupName</option>
+                    }
+                }
+            </select>
+        }
+       
+    </div>
+    <div class="mb-3">
+        
+     
+        <label class="form-label"> تصویر گروه:</label>
+        <br />
+        <span asp-validation-for="ImageAddress"></span>
+        <input asp-for="ImageAddress" id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+        <div class="mb-3">
+            <img id="imagePreview" src="" alt="تصویر انتخاب‌شده" style="max-width: 200px; display: none; border: 1px solid #ddd; padding: 5px;">
+        </div>
+    </div>
+  
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-success" value="ایجاد">
+        <a href="/Admin/Groups/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById("imagePreview");
+            img.src = reader.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+
+

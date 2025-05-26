@@ -1,0 +1,64 @@
+﻿@model Kids.Areas.Admin.AdminDTO.CreateUserDTO
+@{
+    ViewData["Title"] = "ساخت کاربر";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ایجاد کاربر</h1>
+
+<form action="/Admin/Users/Create" id="myForm" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+
+        <label class="form-label">نام :</label>
+        <br />
+        <span asp-validation-for="Name"></span>
+        <input asp-for="Name" type="text" class="form-control">
+    </div>
+ 
+    <div class="mb-3">
+
+        <label class="form-label">شماره تلفن :</label>
+        <br />
+        <span asp-validation-for="PhoneNumber"></span>
+        <input asp-for="PhoneNumber" type="number" class="form-control">
+    </div>
+  
+    <div class="mb-3">
+
+        <label class="form-label">رمز عبور</label>
+        <br />
+        <span asp-validation-for="Password"></span>
+        <input asp-for="Password" type="password" class="form-control">
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label"> ایا فعال باشد؟</label>
+        <br />
+        <span asp-validation-for="IsActive"></span>
+        <input asp-for="IsActive" type="checkbox">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label"> ایا ادمین باشد؟</label>
+        <br />
+        <span asp-validation-for="IsAdmin"></span>
+        <input asp-for="IsAdmin" type="checkbox" >
+    </div>
+    
+  
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-success" value="ایجاد">
+        <a href="/Admin/Users/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+

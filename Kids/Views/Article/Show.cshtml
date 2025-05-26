@@ -1,0 +1,439 @@
+﻿@using Kids.Services
+@using DocumentFormat.OpenXml.Wordprocessing
+@using Comment = Kids.Models.Comment
+@model Article
+@{
+    ViewData["Title"] = Model.ArticleName;
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+    ViewData["IDD"] = Model.Id;
+    ViewData["Name"] = Model.ArticleName;
+    ViewData["MetaDescription"] = Model.ShortDescription;
+    ViewData["OgTitle"] = Model.ArticleName;
+    ViewData["OgDescription"] = Model.ShortDescription;
+    ViewData["OgImage"] = "/uploads/Article" + Model.ImageAddress;
+    ViewData["OgUrl"] = "/Article/" + Model.Id + "/" + Model.ArticleName.Replace(" ", "-");
+    ViewData["TwitterTitle"] = Model.ArticleName;
+    ViewData["TwitterDescription"] = Model.ShortDescription;
+    ViewData["TwitterImage"] = "/uploads/Article" + Model.ImageAddress;
+
+    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var encodedTitle = System.Net.WebUtility.UrlEncode(Model.ArticleName.Replace(" ", "-"));
+    var articleUrl = $"{baseUrl}/article/{Model.Id}/{encodedTitle}";
+    var imagePath = $"{baseUrl}/uploads/{Model.ImageAddress}";
+
+    var datePublished = Model.CreateDate.ToString("yyyy-MM-dd");
+    var dateModified = (Model.CreateDate).ToString("yyyy-MM-dd");
+    var authorName = "خانه مادر و کودک ایرانی";
+    var authorUrl = $"{baseUrl}/author/{System.Net.WebUtility.UrlEncode(authorName.Replace(" ", "-"))}";
+    var ratingValue = ViewBag.Rate?.ToString() ?? "0";
+    var ratingCount = ViewBag.RateCount?.ToString() ?? "0";
+
+    string JsonEscape(string input) =>
+        System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(input ?? "");
+
+    var jsonLdArticle = $@"
+{{
+  ""@context"": ""https://schema.org"",
+  ""@type"": ""Article"",
+  ""headline"": ""{JsonEscape(Model.ArticleName)}"",
+  ""image"": ""{JsonEscape(imagePath)}"",
+  ""datePublished"": ""{datePublished}"",
+  ""dateModified"": ""{dateModified}"",
+  ""author"": {{
+    ""@type"": ""Person"",
+    ""name"": ""{JsonEscape(authorName)}"",
+    ""url"": ""{JsonEscape(authorUrl)}""
+  }},
+  ""publisher"": {{
+    ""@type"": ""Organization"",
+    ""name"": ""{JsonEscape(authorName)}"",
+    ""logo"": {{
+      ""@type"": ""ImageObject"",
+      ""url"": ""{baseUrl}/images/logo.png"",
+      ""width"": 600,
+      ""height"": 60
+    }}
+  }},
+  ""description"": ""{JsonEscape(Model.ShortDescription)}"",
+  ""mainEntityOfPage"": {{
+    ""@type"": ""WebPage"",
+    ""@id"": ""{JsonEscape(articleUrl)}""
+  }},
+  ""aggregateRating"": {{
+    ""@type"": ""AggregateRating"",
+    ""ratingValue"": ""{ratingValue}"",
+    ""reviewCount"": ""{ratingCount}"",
+    ""bestRating"": ""5"",
+    ""worstRating"": ""1""
+  }}
+}}";
+
+    var jsonLdBreadcrumb = $@"
+{{
+  ""@context"": ""https://schema.org"",
+  ""@type"": ""BreadcrumbList"",
+  ""itemListElement"": [
+    {{
+      ""@type"": ""ListItem"",
+      ""position"": 1,
+      ""name"": ""خانه"",
+      ""item"": ""{baseUrl}""
+    }},
+    {{
+      ""@type"": ""ListItem"",
+      ""position"": 2,
+      ""name"": ""مقالات"",
+      ""item"": ""{baseUrl}/articles""
+    }},
+    {{
+      ""@type"": ""ListItem"",
+      ""position"": 3,
+      ""name"": ""{JsonEscape(Model.ArticleName)}"",
+      ""item"": ""{JsonEscape(articleUrl)}""
+    }}
+  ]
+}}";
+}
+<script type="application/ld+json">
+    @Html.Raw(jsonLdArticle)
+</script>
+
+<script type="application/ld+json">
+    @Html.Raw(jsonLdBreadcrumb)
+</script>
+
+
+
+
+<div class="Article-Container2">
+
+    <article class="Article-Main">
+        <img src="/uploads/Article/@Model.ImageAddress" class="Article-MainImage" alt="مادر و کودک |@Model.ArticleName">
+
+        <div class="Article-Span-Container">
+            <a href="/Article/Archive?ArticleGroups=@Model.ArticleGroupId"><span><i class="fa-solid fa-layer-group"></i>  @Model.ArticleGroup.GroupName </span></a>
+            <a href=""><span><i class="fa-solid fa-clock"></i> @ShamsiService.ToShamsi(@Model.CreateDate) </span></a>
+
+            <h1 class="Article-Title">@Model.ArticleName</h1>
+        </div>
+
+        <div class="Article-Content">
+            @Html.Raw(Model.FullDescription)
+        </div>
+        <div class="Tag-Container">
+            @{
+                if (!string.IsNullOrWhiteSpace(Model.Tags))
+                {
+                    foreach (var tag in Model.Tags.Split('-', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        var trimmedTag = tag.Trim();
+                        <a href="/Article/archive?search=@trimmedTag">
+                            <span><i class="fa-solid fa-hashtag"></i> @trimmedTag </span>
+                        </a>
+                    }
+                }
+            }
+        </div>
+        <section class="rate-container">
+            <span class="question">چه امتیازی برای این مقاله می‌دهید؟</span>
+            @{
+                if (ViewBag.OldRate != null)
+                {
+                    <div class="star-container">
+                        <span class="star @( ViewBag.OldRate >= 1 ? "active" : "")" data-value="1">★</span>
+                        <span class="star @( ViewBag.OldRate >= 2 ? "active" : "")" data-value="2">★</span>
+                        <span class="star @( ViewBag.OldRate >= 3 ? "active" : "")" data-value="3">★</span>
+                        <span class="star @( ViewBag.OldRate >= 4 ? "active" : "")" data-value="4">★</span>
+                        <span class="star @( ViewBag.OldRate >= 5 ? "active" : "")" data-value="5">★</span>
+                        <span class="rate-avg" id="avgRating">@ViewBag.Rate از 5</span>
+                    </div>
+                }
+
+                else
+                {
+                    <div class="star-container">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                        <span class="rate-avg" id="avgRating">@ViewBag.Rate از 5</span>
+                    </div>
+                }
+            }
+        </section>
+
+        <section class="Comment-Section2">
+            @{
+                if (User.Identity.IsAuthenticated)
+                {
+                    <h2>دیدگاه کاربران</h2>
+                    <div class="Comment-Container">
+                        <div class="Comment-Header">
+                            @{
+                                if (ViewBag.Image != null)
+                                {
+                                    <img src="/Uploads/UserImage/@ViewBag.Image" alt="">
+                                }
+                                else
+                                {
+                                    <img src="/Images/user.svg" alt="">
+                                }
+                            }
+                            <div class="DateName">
+                                <span>@User.Identity.Name</span><br>
+
+                            </div>
+                        </div>
+                        <textarea name="" id="newComment" placeholder="متن خود را وارد کنید..." cols="30" rows="10"></textarea>
+                        <button class="send" onclick="submitComment()"> ثبت دیدگاه</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-danger" style="background-color: #FFF3CD;color: #8D6604">برای نظر دادن لطفا <a href="/login">وارد</a> حساب کاربری خود شوید </div>
+                }
+            }
+
+
+            @{
+                void RenderComments(List<Comment> comments, int? parentId = null, int level = 0)
+                {
+                    var children = comments.Where(c => c.ParentId == parentId).ToList();
+
+                    foreach (var comment in children)
+                    {
+                        <div class="Comment-Container"  id="comment-@comment.Id">
+                            <div class="Comment-Header">
+                                @{
+                                    if (!string.IsNullOrEmpty(comment.User?.ImageAddress))
+                                    {
+                                        <img src="/uploads/UserImage/@comment.User.ImageAddress" alt="آواتار کاربر">
+                                    }
+                                    else
+                                    {
+                                        <img src="/images/user.svg" alt="آواتار کاربر">
+                                    }
+                                }
+                                <div class="DateName">
+                                    <span>@comment.User?.Name</span><br>
+                                    <span class="Comment-Date">@ShamsiService.ToShamsi(comment.CreateTime)</span>
+                                </div>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <button class="Reply" onclick="toggleReplyBox(@comment.Id)">پاسخ</button>
+                                }
+                            </div>
+
+                            <p>@comment.CommentText</p>
+
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <div id="replyBox-@comment.Id" class="reply-box" style="display: none;">
+                                    <textarea name="" id="replyText-@comment.Id" placeholder="متن خود را وارد کنید..." cols="30" rows="10"></textarea>
+                                    <input type="hidden" id="parentId-@comment.Id" value="@comment.Id" />
+                                    <button class="send" onclick="submitComment(@comment.Id)">ثبت پاسخ</button>
+                                </div>
+                            }
+
+                            <!-- پاسخ‌های این کامنت -->
+                            @{
+                                RenderComments(comments, comment.Id, level + 1);
+                            }
+                        </div>
+                    }
+                }
+            }
+
+            <!-- حالا فقط یک بار تابع رو صدا می‌زنیم -->
+            @if (Model.Comments.Any())
+            {
+                RenderComments(Model.Comments.Where(p => p.IsApproved == true).ToList());
+            }
+
+        </section>
+    </article>
+
+    <aside class="Article-SideBar">
+        <div class="Top-Article-SideBar-Container">
+            <h3> <i class="fa-solid fa-newspaper"></i>آخرین مقالات</h3>
+     @{
+         foreach (var VARIABLE in ViewBag.Last as List<Article>)
+         {
+                    <a href="/Article/@VARIABLE.Id/@SlugMacker.GenerateSlug(VARIABLE.ArticleName)">
+                 <div class="Top-Article-SideBar">
+                     <img src="/uploads/Article/@VARIABLE.ImageAddress" alt="مادر و کودک |@VARIABLE.ArticleName">
+                     <span class="SideBarTitle">@VARIABLE.ArticleName</span>
+                     <p>
+                        @VARIABLE.ShortDescription
+                     </p>
+
+                 </div>
+             </a>
+         }
+     }
+             
+             
+           
+        </div>
+        <div class="Top-Article-SideBar-Container">
+            <h3> <i class="fa-solid fa-trophy"></i>محبوب ترین مقالات</h3>
+            @{
+                foreach (var VARIABLE in ViewBag.Top as List<Article>)
+                {
+                    <a href="/Article/@VARIABLE.Id/@VARIABLE.ArticleName.Replace(" ", "-")">
+                        <div class="Top-Article-SideBar">
+                            <img src="/uploads/Article/@VARIABLE.ImageAddress" alt="مادر و کودک |@VARIABLE.ArticleName">
+                            <span class="SideBarTitle">@VARIABLE.ArticleName</span>
+                            <p>
+                                @VARIABLE.ShortDescription
+                            </p>
+
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+        <a href="">
+            <div class="Article-Link">
+                <img src="/images/300-63inst.jpg" alt="">
+                <img src="/images/300-63tel.jpg" alt="">
+            </div>
+        </a>
+    </aside>
+</div>
+
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></sc>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    let ArticleId = @Model.Id; // مقدار دوره را قبل از استفاده تنظیم کن
+
+    function toggleReplyBox(commentId) {
+        let replyBox = document.getElementById("replyBox-" + commentId);
+        replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
+    }
+
+    function submitComment(parentId) {
+        let text = parentId ? document.getElementById("replyText-" + parentId).value : document.getElementById("newComment").value;
+
+        if (!text.trim()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'خطا!',
+                text: 'متن نظر نمی‌تواند خالی باشد.',
+                confirmButtonText: 'باشه'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: "/Article/CommentAdd",
+            type: "POST",
+            data: { ArticleId: ArticleId, CommentText: text, ParentId: parentId },
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'موفق!',
+                    text: 'نظر شما با موفقیت ثبت شد و پس از بررسی منتشر خواهد شد',
+                    confirmButtonText: 'باشه'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا!',
+                    text: 'مشکلی در ارسال نظر پیش آمد.',
+                    confirmButtonText: 'باشه'
+                });
+            }
+        });
+    }
+
+
+</script>
+
+
+</div>
+
+<script>
+            document.querySelectorAll('.gallery-item').forEach(img => {
+        img.addEventListener('click', function() {
+            document.getElementById('lightbox').style.display = 'flex';
+            document.getElementById('lightbox-img').src = this.src;
+        });
+    });
+
+    document.querySelector('.close').addEventListener('click', function() {
+        document.getElementById('lightbox').style.display = 'none';
+    });
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll(".star").forEach(star => {
+        star.addEventListener("click", function () {
+            const RateValue = parseInt(this.getAttribute("data-value"));
+            const ArticleId = @Model.Id;
+
+            $.ajax({
+                url: "/Article/AddRate",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ ArticleId: ArticleId, RateValue: RateValue }),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'موفق!',
+                            text: response.messege,
+                            confirmButtonText: 'باشه'
+                        }).then(() => {
+                            // Update UI without reloading
+                            updateStars(RateValue);
+                            updateAverage(response.average);
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا!',
+                            text: response.messege,
+                            confirmButtonText: 'باشه'
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    let errorMessage = 'مشکلی در ثبت امتیاز پیش آمد.';
+                    if (xhr.responseJSON && xhr.responseJSON.messege) {
+                        errorMessage = xhr.responseJSON.messege;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا!',
+                        text: errorMessage,
+                        confirmButtonText: 'باشه'
+                    });
+                }
+            });
+        });
+    });
+
+    function updateStars(rating) {
+        document.querySelectorAll(".star").forEach(star => {
+            const value = parseInt(star.getAttribute("data-value"));
+            star.style.color = (value <= rating) ? "#facc15" : "#d1d5db";
+        });
+    }
+
+    function updateAverage(avg) {
+        const avgElement = document.querySelector(".RateAVG");
+        if (avgElement) {
+            avgElement.textContent = `${avg.toFixed(1)} از 5`;
+        }
+    }
+</script>
+

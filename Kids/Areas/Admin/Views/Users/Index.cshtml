@@ -1,0 +1,221 @@
+﻿@using Azure.Core
+@model IEnumerable<Kids.Models.User>
+
+@{
+    ViewData["Title"] = "کاربران";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>لیست کاربران</h1>
+<div class="table-responsive">
+    <a href="/Admin/users/Create" class="btn btn-success" style="margin: 20px 20px;">ایجاد کاربر</a>
+    <a href="/admin/Users/ExportToExcel" class="btn btn-success" style="margin: 0px 20px">
+        خروجی اکسل <i class="fa fa-file-excel"></i>
+    </a>
+    <table class="table table-striped">
+        <form method="get" action="/Admin/Users/index"/>
+            <div class="row" style="margin-bottom: 30px;">
+                <div class="col-2">
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">انتخاب نوع کاربر</label>
+                        <select class="form-control" name="Category" id="exampleFormControlSelect1">
+                          @{
+                              @if (Context.Request.Query.ContainsKey("Category"))
+                              {
+                                  string category = Context.Request.Query["Category"].ToString(); // تبدیل به string
+                                  string selectedText = category switch
+                                  {
+                                      "All" => "همه",
+                                      "Active" => "فعال",
+                                      "Deactive" => "غیرفعال",
+                                      "Buy" => "خرید داشته",
+                                      "NotBuy" => "خرید نداشته",
+                                      _ => "دسته‌بندی نامشخص"
+                                      };
+
+                                  <option selected="selected" value="@category">@selectedText</option>
+                              } 
+                              }
+                          }
+                            <option value=All>همه</option>
+                            <option value=Active>فعال</option>
+                            <option value=Deactive>غیر فعال</option>
+                            <option value=Buy>خرید داشته</option>
+                            <option value=NotBuy>خرید نداشته</option>
+                        </select>
+
+
+                    </div>
+
+                </div>
+                <div class="col-2">
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">مرتب سازی</label>
+                        <select class="form-control" name="Order" id="exampleFormControlSelect1">
+                            @if (Context.Request.Query.ContainsKey("Order"))
+                            {
+                                string category = Context.Request.Query["Order"].ToString(); // تبدیل به string
+                                string selectedText = category switch
+                                {
+                                    "Asc" => "صعودی",
+                                    "Desc" => "نزولی",
+                                    "New" => "جدید ترین",
+                                    "Old" => " قدیمی ترین",
+                                    "High" => " بیشترین تعداد فاکتور",
+                                    _ => "دسته‌بندی نامشخص"
+                                    };
+
+                                <option selected="selected" value="@category">@selectedText</option>
+                            } 
+                            <option value=Asc>صعودی</option>
+                            <option value=Desc>نزولی</option>
+                            <option value=New>جدید ترین</option>
+                            <option value=Old>قدیمی ترین</option>
+                            <option value=High> بیشترین تعداد فاکتور</option>
+                        </select>
+                      
+
+                    </div>
+
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">جستجو</label>
+                        <div class="d-flex">
+                        @{
+
+                            if (Context.Request.Query.ContainsKey("Search"))
+                            {
+                                <input type="text" class="form-control me-3" name="Search" placeholder="" value="@Context.Request.Query["Search"]" />
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control me-3" name="Search" placeholder="جستجو..."/>
+                            }
+  
+                        }
+                           
+                            <input type="submit" class="btn btn-success me-1" value="اعمال"/>
+
+                        </div>
+                      
+                    </div>
+                </div>
+            
+            </div>
+        
+        <tr style="margin-top: 30px;">
+            <td>تصویر:</td>
+            <td>نام</td>
+          
+            <td>شماره موبایل</td>
+            
+            <td>آیا فعال است؟</td>
+            <td>تعداد دوره های کاربر</td>
+            <td>عملیات</td>
+        </tr>
+
+        @{
+            foreach (var items in Model)
+            {
+                <tr id="row-@items.Id">
+                   
+                    <td>
+                    @{
+                        if (items.ImageAddress!=null)
+                        {
+                        <img style="width: 150px; height: 150px; border-radius: 50%" src="/uploads/UserImages/@items.ImageAddress"/>
+                        }
+                    }
+                    </td>
+                  
+                    <td>
+                        @items.Name
+                    </td>
+                  
+                    <td>
+                        @items.PhoneNumber
+                    </td>
+                 
+                    <td>
+                        @items.IsActive
+                    </td>
+                    <td>
+                        @items.ClassMembers.Count()
+                    </td>
+                    <td>
+                        <a href="/Admin/users/AddUserToCourse/@items.Id" class="btn btn-secondary">اضافه کردن کاربر به دوره</a>
+                        <a href="/Admin/users/UserList/@items.Id" class="btn btn-primary">دوره های کاربر</a>
+                        <a href="/Admin/users/Edit/@items.Id" class="btn btn-warning">ویرایش</a>
+                        <a class="btn btn-danger delete-btn" data-id="@items.Id">حذف</a>
+                    </td>
+                </tr>
+            }
+        }
+        <nav aria-label="Page navigation example" style="margin-top: 20px">
+            <ul class="pagination">
+
+                @if (ViewBag.pageid > 1)
+                {
+                    <li class="page-item"><a class="page-link" href="/admin/Users?pageid=@((ViewBag.pageid) - 1)&Search=@ViewBag.Search&Order=@ViewBag.Order&&Category=@ViewBag.Category">قبل</a></li>
+                }
+                @{
+                    for (int i = 1; i < ViewBag.maxpage + 1; i++)
+                    {
+                        <li class="page-item @(ViewBag.pageid == i ? "active" : "")"><a class="page-link " href="/admin/Users?pageid=@i&Search=@ViewBag.Search&Order=@ViewBag.Order&Stock=@ViewBag.Stock&Category=@ViewBag.Category" >@i</a></li>
+
+                    }
+                }
+                @if (ViewBag.pageid < ViewBag.maxpage)
+                {
+                    <li class="page-item"><a class="page-link" href="/admin/Users?pageid=@((ViewBag.pageid) + 1)&Search=@ViewBag.Search&Order=@ViewBag.Order&Stock=@ViewBag.Stock&Category=@ViewBag.Category" >بعد</a></li>
+
+                }
+            </ul>
+        </nav>
+
+    </table>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let itemId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Users/DeleteItem/${itemId}`, {
+                            method: "POST"
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("حذف شد!", "آیتم موردنظر حذف شد.", "success");
+                                 document.getElementById(`row-${itemId}`).remove();
+                             // حذف ردیف از جدول
+                            } else {
+                                Swal.fire("خطا!", "حذف انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+
+

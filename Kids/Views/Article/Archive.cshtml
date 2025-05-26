@@ -1,0 +1,260 @@
+﻿@using Kids.Services
+@model Kids.DTO.ArticleArchiveDTO
+@{
+    ViewData["Title"] = "لیست مقالات ها";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<div class=" filters">
+    <form action="/Article/Archive" method="get" id="sortForm">
+        <div class="filterstitle">
+            <a href="/"> خانه / </a><a href=""> مقالات </a>
+        </div>
+        <aside class="listsidebar ">
+            <div class="sidebaritem">
+                <span class="sidebaritemtitle">
+                    جستجو
+                </span>
+                <input type="text" name="Search" placeholder="جستجو  مقاله..." value="@ViewBag.Search">
+            </div>
+            <div class="sidebaritem">
+           
+
+
+                <span class="sidebaritemtitle">
+                    دسته بندی
+                </span>
+                <div class="Checkbox-Archive">
+
+                    @foreach (var VARIABLE in ViewBag.Groups)
+                    {
+                        <label>@VARIABLE.GroupName</label>
+
+                        <input type="checkbox" name="ArticleGroups" value="@VARIABLE.Id"
+                        @(ViewBag.Category != null && ((List<int>)ViewBag.Category).Contains(VARIABLE.Id) ? "checked" : "") />
+
+                        <br />
+                    }
+                </div>
+
+               
+            </div>
+        
+
+          
+
+            <button id="submit2">اعمال فیلتر</button>
+        </aside>
+        <a class="openfiltermobile" id="OpenFilterMobile">
+            <i class="fa-solid fa-filter"></i>
+        </a>
+        <input type="hidden" name="Order" id="sortOrder" value="" />
+    </form>
+
+
+    <form action="/Article/Archive" method="get" id="sortForm">
+        <aside class="listsidebarmobile " id="listsidebarMobile">
+            <span class="closefiltermobile" id="CloseFilterMobile"><i class="fa-solid fa-xmark"></i></span>
+            <div class="sidebaritemmobile">
+                <span class="sidebaritemtitlemobile">
+                    جستجو
+                </span>
+                <input type="text" placeholder="جستجو مقاله..." value="@ViewBag.Search" name="Search">
+            </div>
+            <div class="sidebaritemmobile">
+                
+
+                <span class="sidebaritemtitle">
+                    دسته بندی
+                </span>
+                <div class="Checkbox-Archive">
+
+                    @foreach (var VARIABLE in ViewBag.Groups)
+                    {
+                        <label>@VARIABLE.GroupName</label>
+
+                        <input type="checkbox" name="ArticleGroups" value="@VARIABLE.Id"
+                        @(ViewBag.Category != null && ((List<int>)ViewBag.Category).Contains(VARIABLE.Id) ? "checked" : "") />
+
+                        <br />
+                    }
+                </div>
+            </div>
+
+          
+            <button id="submit2">اعمال فیلتر</button>
+
+        </aside>
+        <input type="hidden" name="Order" id="sortOrder" value="" />
+    </form>
+    <content class="listcontent">
+        <div class="order-container">
+            <div class="order">
+                <span>مرتب سازی بر اساس:</span>
+
+                <a class="orderitem sort-link @(ViewBag.Sort == "Date" ? "active2" : "")" data-value="Date">جدید ترین</a>
+                <a class="orderitem sort-link @(ViewBag.Sort == "DateAsc" ? "active2" : "")" data-value="DateAsc">قدیمی ترین</a>
+                <a class="orderitem sort-link @(ViewBag.Sort == "Best" ? "active2" : "")" data-value="Best" s>محبوب ترین</a>
+            </div>
+
+        </div>
+        <div class="productlist">
+            @{
+
+                foreach (var VARIABLE in Model.Articles)
+                {
+
+                    <a href="/Article/@VARIABLE.Id/@SlugMacker.GenerateSlug(VARIABLE.ArticleName)" style="text-decoration: none;">
+
+                        <div class="productcard">
+
+                            <img src="/uploads/Article/@VARIABLE.ImageAddress" alt="">
+                            <div class="productcard-price">
+                                <span class="card-title">@VARIABLE.ArticleName</span>
+                                <span class="catcard">@VARIABLE.ArticleGroup.GroupName</span>
+                                <p style="display: inline-block; width: 90%; text-align: justify; height: 130px;color: #1e345a"> @VARIABLE.ShortDescription</p>
+                              
+
+                            </div>
+                        </div>
+                    </a>
+
+                }
+
+            }
+        </div>
+        @{
+            string searchParam = !string.IsNullOrEmpty(ViewBag.Search) ? $"&Search={ViewBag.Search}" : "";
+            string orderParam = !string.IsNullOrEmpty(ViewBag.Sort) ? $"&Order={ViewBag.Sort}" : "";
+            string isFreeParam = ViewBag.IsFree == "on" ? "&IsFree=true" : "";
+            string discountParam = ViewBag.Discount == "on" ? "&Discount=true" : "";
+
+            string groupParam = "";
+            if (ViewBag.Category != null)
+            {
+                foreach (var g in (List<int>)ViewBag.Category)
+                {
+                    groupParam += $"&ArticleGroups={g}";
+                }
+            }
+
+
+
+
+            string finalParams = searchParam + orderParam + groupParam;
+        }
+
+        <div aria-label="Page navigation example" style="margin-top: 20px; text-align: center; margin-bottom: 40px">
+            <ul class="pagination" style="display: inline-flex; padding: 0; list-style-type: none; margin: 0;">
+
+                @if (ViewBag.pageid > 1)
+                {
+                    <li class="page-item" style="margin-right: 5px;">
+                        <a class="page-link"
+                           href="/Article/Archive?pageid=@(ViewBag.pageid - 1)@Html.Raw(finalParams)"
+                           style="padding: 10px 15px; background-color: #5a9ecf; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            &laquo;
+                        </a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= ViewBag.maxpage; i++)
+                {
+                    <li class="page-item" style="margin-right: 5px;">
+                        <a class="page-link"
+                           href="/Article/Archive?pageid=@i@Html.Raw(finalParams)"
+                           style="padding: 10px 15px; background-color: @(ViewBag.pageid == i ? "#153c59" : "#5a9ecf"); color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                @if (ViewBag.pageid < ViewBag.maxpage)
+                {
+                    <li class="page-item" style="margin-right: 5px;">
+                        <a class="page-link"
+                           href="/Article/Archive?pageid=@(ViewBag.pageid + 1)@Html.Raw(finalParams)"
+                           style="padding: 10px 15px; background-color: #5a9ecf; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            &raquo;
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+
+
+    </content>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".sort-link").forEach(link => {
+            link.addEventListener("click", function (event) {
+                event.preventDefault(); // از رفرش شدن صفحه جلوگیری کن
+
+                let sortValue = this.getAttribute("data-value");
+                let sortInput = document.getElementById("sortOrder");
+                let sortForm = document.getElementById("sortForm");
+
+                if (sortInput && sortForm) {  // بررسی کن که المنت‌ها موجود باشند
+                    sortInput.value = sortValue; // مقدار را درون input مخفی قرار بده
+                    sortForm.submit(); // فرم را ارسال کن
+                } else {
+                    console.error("فرم یا فیلد sortOrder پیدا نشد!");
+                }
+            });
+        });
+    });
+</script>
+
+
+<script>
+
+    // بررسی اینکه دکمه‌ها وجود دارن قبل از اضافه کردن رویداد
+    document.addEventListener("DOMContentLoaded", function () {
+        let openBtn = document.getElementById("open");
+        let closeBtn = document.getElementById("close");
+        let menu = document.getElementById('openmenu');
+
+        if (openBtn && closeBtn && menu) {
+            openBtn.addEventListener("click", function () {
+                menu.style.display = "block";
+            });
+
+            closeBtn.addEventListener("click", function () {
+                menu.style.display = "none";
+            });
+        }
+
+        let openFilterBtn = document.getElementById("OpenFilterMobile");
+        let closeFilterBtn = document.getElementById("CloseFilterMobile");
+        let filterMenu = document.getElementById('listsidebarMobile');
+
+        if (openFilterBtn && closeFilterBtn && filterMenu) {
+            openFilterBtn.addEventListener("click", function () {
+                filterMenu.style.display = "block";
+            });
+
+            closeFilterBtn.addEventListener("click", function () {
+                filterMenu.style.display = "none";
+            });
+        }
+
+        // برای انتخاب مرتب‌سازی
+        let orderItems = document.querySelectorAll(".orderitem");
+
+        orderItems.forEach(item => {
+            item.addEventListener("click", function () {
+                if (!this.classList.contains("orderitemactive")) {
+                    orderItems.forEach(i => i.classList.remove("orderitemactive"));
+                    this.classList.add("orderitemactive");
+                }
+            });
+        });
+    });
+
+</script>
+<script>
+
+</script>
+

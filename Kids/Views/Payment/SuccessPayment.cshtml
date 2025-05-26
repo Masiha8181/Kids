@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = " آموزش تخصصی بلاگری و مدلینگ حجاب – از صفر تا درآمدزایی";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+
+
+
+<div class="" style="text-align: center; ">
+    <div class="result">
+        <div class="icon2">
+            <i class="fa-solid fa-check"></i>
+            <span> پرداخت با موفقیت انجام شد!</span>
+        </div>
+
+        <div class="con-suc"> 
+            <p><strong>کد پیگیری:</strong> @ViewBag.Code</p>
+         <p><strong>مبلغ پرداختی:</strong> @ViewBag.Amount تومان</p>
+            <p><strong>دوره خریداری شده:</strong> @ViewBag.CourseName</p>
+           
+         <a href="/usercourse" class="btn btn-primary">   مشاهده دوره ها</a></div>
+    </div>
+</div>

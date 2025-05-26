@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Kids.Models
+@model Kids.Areas.Admin.AdminDTO.EditArticleGroupDTO
+@{
+    ViewData["Title"] = "ویرایش ";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ویرایش گروه مقاله</h1>
+<form action="/Admin/ArticleGroup/Edit" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+        <input type="hidden" asp-for="Id" value="@Model.Id"/>
+        <label class="form-label">نام گروه:</label>
+        <br />
+        <span asp-validation-for="GroupName"></span>
+        <input asp-for="GroupName"  value="@Model.GroupName" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+        @{
+            List<ArticleGroup> list = ViewBag.list;
+            <label class="form-label"> زیر مجموعه:</label>
+            <br />
+            <span asp-validation-for="ParentID"></span>
+            <select class="form-select" asp-for="ParentID">
+                <option value="">---- انتخاب ----</option>
+                @{
+                    foreach (var item in list)
+                    {
+                        <option value="@item.Id">@item.GroupName</option>
+                    }
+                }
+            </select>
+        }
+
+    </div>
+    <div class="mb-3">
+        <input name="ImageUpload"   id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+        <img id="imagePreview" src="/uploads/GroupsImage/@Model.ImageAddress" alt="تصویر انتخاب ‌شده" style="max-width: 200px; border: 1px solid #ddd; padding: 5px;">
+    </div>
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-warning" value="ویرایش">
+        <a href="/Admin/ArticleGroup/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById("imagePreview");
+            img.src = reader.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

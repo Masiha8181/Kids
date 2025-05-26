@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewData["Title"] = "AddUserToCourse";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>اضافه کردن دوره برای کاربر @ViewBag.User</h1>
+<div>
+    <label style="display: inline-block; margin: 20px 0px;"> نام دوره:</label>
+    <select class="form-control" id="courseSelect" style="margin: 20px 0px">
+        @{
+            foreach (var item in ViewBag.Course)
+            {
+                <option value="@item.Id">@item.CourseName</option>
+            }
+        }
+    </select>
+    <button id="addUserToCourseBtn" class="btn btn-success" style="margin: 20px 0px">اضافه کردن</button>
+
+    <div id="resultMessage" class=""></div> <!-- پیام موفقیت یا خطا -->
+</div>
+<a href="/Admin/Users" class="btn btn-primary"> بازگشت</a>
+<script>
+    document.getElementById("addUserToCourseBtn").addEventListener("click", function () {
+        let userId = @ViewBag.Id;  // مقدار UserId که از Index فرستاده شده
+        let courseId = document.getElementById("courseSelect").value;
+
+        if (!userId || !courseId) {
+            alert("لطفاً یک دوره را انتخاب کنید.");
+            return;
+        }
+
+        fetch("/Admin/Course/AddUserToCourse", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ userId: userId, courseId: courseId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            let resultMessage = document.getElementById("resultMessage");
+            if (data.success) {
+                resultMessage.innerHTML = `<p style="color: green!important;">${data.message}</p>`;
+            } else {
+                resultMessage.innerHTML = `<p style="color: red;">${data.message}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error("خطا:", error);
+            document.getElementById("resultMessage").innerHTML = `<p style="color: red;">مشکلی پیش آمد.</p>`;
+        });
+    });
+</script>

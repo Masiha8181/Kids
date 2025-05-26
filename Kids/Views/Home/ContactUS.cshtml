@@ -1,0 +1,93 @@
+﻿@model Kids.DTO.ContactUsDTO
+@{
+    ViewData["Title"] = "تماس با ما";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<div class="About-Container">
+    <div class="About">
+        <div class="mapouter">
+            <div class="gmap_canvas" style="margin: 30px 0px;">
+                <iframe class="gmap_iframe" width="100%"
+                        frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                        src="https://maps.google.com/maps?width=1359&amp;height=300&amp;hl=en&amp;q=رایمون مدیا&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe><a href="https://sprunkiplay.com">Sprunki</a>
+            </div>
+            <style>
+                .mapouter {
+                    position: relative;
+                    text-align: right;
+                    width: 100%;
+                    height: 300px;
+                }
+
+                .gmap_canvas {
+                    overflow: hidden;
+                    background: none !important;
+                    width: 100%;
+                    height: 300px;
+                }
+
+                .gmap_iframe {
+                    height: 300px !important;
+                }
+            </style>
+        </div>
+        <hr width="90%" style="margin-top: 20px; color: lightgray;" color="lightgray">
+        <div class="About-Form">
+            <form action="/ContactUS" method="post">
+                <h3>ارتباط با ما</h3>
+                @{
+                    if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger" asp-validation-summary="All"></div>
+                    }
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">پیام شما با موفقیت ارسال شد در صورت نیاز با شما تماس خواهیم گرفت</div>
+                    }
+                }
+                <div class="Formy">
+                    <label for="" asp-for="FullName">نام و نام خانوادگی:</label>
+                    <input  asp-for="FullName" type="text"><br/>
+                    <span asp-validation-for="FullName"></span>
+                </div>
+                <div class="Formy">
+                    <label  asp-for="PhoneNumber" for=""> شماره تماس:</label>
+                    <input asp-for="PhoneNumber" type="number"><br />
+                    <span asp-validation-for="PhoneNumber"></span>
+                </div>
+             
+                <div class="Formy">
+                    <label for="" asp-for="Text">متن پیام :</label>
+                    <textarea asp-for="Text" id="" cols="30" rows="10"></textarea><br />
+                    <span asp-validation-for="Text"></span>
+                </div>
+                <div class="Formyy">
+                    <input type="submit" value="ارسال">
+                </div>
+
+            </form>
+        </div>
+        <div class="About-Address">
+            <h1>مرکز تخصصی مادر و کودک در تهرانپارس</h1>
+            <h2>
+                ارائه دهنده برترین خدمات آموزشی و مشاوره ای برای مادران و کودکان در منطقه 4 تهران
+                <br>
+                با تیمی از متخصصان مجرب در حوزه روانشناسی کودک، تربیت و رشد کودکان
+            </h2>
+            <div class="Iconn">
+                <a href="#" aria-label="صفحه اینستاگرام مادر و کودک تهرانپارس"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="کانال تلگرام مادر و کودک"><i class="fa-brands fa-telegram"></i></a>
+                <a href="#" aria-label="پروفایل واتساپ ما"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="#" aria-label="حساب کاربری ایتا"><i class="fa-brands fa-telegram"></i></a>
+            </div>
+            <div class="Love">
+                <h3>
+                    با بیش از 10 سال تجربه در زمینه آموزش و مشاوره مادر و کودک
+                    <br>
+                    همراه شما در مسیر پرورش و تربیت کودکان شاد و خلاق هستیم
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>

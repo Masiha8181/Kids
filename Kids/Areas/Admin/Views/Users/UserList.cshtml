@@ -1,0 +1,153 @@
+﻿@using Kids.Services
+@model IEnumerable<Kids.Models.Course>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>لیست دوره های کاربر @ViewBag.User </h1>
+<div class="table-responsive">
+    <a class="btn btn-primary" href="/Admin/users">بازگشت</a><br/><br/>
+    <table class="table table-striped">
+        <tr>
+
+            <td>نام دوره</td>
+            <td>تصویر </td>
+            <td>توضیحات کوتاه</td>
+            <td>توضیحات اصلی </td>
+            <td> قیمت </td>
+            <td> تاریخ شروع</td>
+            <td> تاریخ پایان </td>
+            <td> تعداد جلسات </td>
+            <td> ظرفیت </td>
+            <td> آیا فعال است؟ </td>
+            <td> مدرس </td>
+            <td> گروه دوره </td>
+            <td> وضعیت </td>
+            <td> عملیات </td>
+           
+        </tr>
+
+        @{
+            foreach (var items in Model)
+            {
+                <tr id="row-@items.Id">
+                    <td>
+                        @items.CourseName
+                    </td>
+                    <td>
+                        <img src="/uploads/@items.ImageAddress" style="max-width: 100px">
+                    </td>
+                    <td>
+                        @items.ShortDescription
+                    </td>
+                    <td>
+                        @items.FullDescription
+                    </td>
+                    <td>
+                        @items.TotalPrice تومان
+                    </td>
+                    <td>
+                        @{
+                            if (items.DateStart != null)
+                            {
+                                @ShamsiService.ToShamsi((DateTime)items.DateStart)
+                                ;
+                            }
+                        }
+                    </td>
+                    <td>
+                        @{
+                            if (@items.DateEnd != null)
+                            {
+                                @ShamsiService.ToShamsi((DateTime)items.DateEnd)
+                                ;
+                            }
+                        }
+                    </td>
+                    <td>
+                        @items.NumberOfSessions
+                    </td>
+                    <td>
+                        @items.Capacity
+                    </td>
+                    <td>
+                        @items.IsActive
+                    </td>
+                    <td>
+                        @{
+                            if (items.MasterId != null)
+                            {
+                                @items.Master.MasterFullName
+                                
+
+                            }
+                        }
+                    </td>
+                    <td>
+                        @{
+                            if (items.CourseGroupId != null)
+                            {
+                                @items.CourseGroup.GroupName
+
+
+                            }
+                        }
+                    </td>
+                    <td>
+                        @items.Status
+                    </td>
+                    <td>
+                        <a class="btn btn-danger delete-btn" data-user-id="@ViewBag.Id" data-course-id="@items.Id"> حذف کاربر از دوره</a>
+                    </td>
+                 
+                </tr>
+            }
+        }
+
+    </table>
+</div>
+<script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let userId = this.getAttribute("data-user-id");
+                let courseId = this.getAttribute("data-course-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Users/DeleteCourse`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                           body: JSON.stringify({ userId: userId, courseId: courseId })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("حذف شد!", "کاربر از دوره حذف شد.", "success");
+                                document.getElementById(`row-${courseId}`).remove(); // حذف ردیف از جدول
+                            } else {
+                                Swal.fire("خطا!", "حذف انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+
+
+</script>

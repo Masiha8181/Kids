@@ -1,0 +1,58 @@
+﻿@model Kids.Areas.Admin.AdminDTO.EditEpisodeDTO
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ویرایش فایل</h1>
+
+<form action="/Admin/Episode/Edit" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+       
+        <label class="form-label">عنوان :</label>
+        <br />
+        <span asp-validation-for="Title"></span>
+        <input asp-for="Title" value="@Model.Title" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <input type="hidden" asp-for="FilePath" value="@Model.FilePath" />
+        <label class="form-label">توضیحات :</label>
+        <br />
+        <span asp-validation-for="Description"></span>
+        <input asp-for="Description" value="@Model.Description" type="text" class="form-control">
+    </div>
+  
+    <div class="mb-3">
+
+
+        <label class="form-label"> فایل :</label>
+        <br />
+        <span asp-validation-for="FilePath"></span>
+
+        <input name="Upload" id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+    </div>
+    <div class="mb-3">
+       
+        <label class="form-label">آیا رایگان باشد :</label>
+        <br />
+        <span asp-validation-for="IsFree"></span>
+        <input asp-for="IsFree" value="@Model.IsFree" type="checkbox" >
+    </div>
+
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-warning" value="ویرایش">
+        <a href="/Admin/Episode/ShowCourseEpisode/@ViewBag.Id" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+
+

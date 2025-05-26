@@ -1,0 +1,576 @@
+﻿@using Kids.Services
+@model Course
+
+@{
+    ViewData["Title"] = Model.CourseName;
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+    ViewData["IDD"] = Model.Id;
+    ViewData["Name"] = Model.CourseName;
+    ViewData["MetaDescription"] = Model.ShortDescription;
+    ViewData["OgTitle"] = Model.CourseName;
+    ViewData["OgDescription"] = Model.ShortDescription;
+    ViewData["OgImage"] = "/uploads/" + Model.ImageAddress;
+    ViewData["OgUrl"] = "/course/" + Model.Id + "/" + Model.CourseName.Replace(" ", "-");
+    ViewData["TwitterTitle"] = Model.CourseName;
+    ViewData["TwitterDescription"] = Model.ShortDescription;
+    ViewData["TwitterImage"] = "/uploads/" + Model.ImageAddress;
+
+    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+
+   
+}
+
+<style>
+    .discount-timer-box {
+        background-color: white;
+        color: #c71585;
+        border: 3px solid #c71585;
+        padding: 10px 20px;
+        border-radius: 22px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 20px 0px;
+        display: inline-block;
+       
+    }
+
+</style>
+<div class="Course-Container">
+
+<div class="Course-Main">
+    <div style="position: relative;">
+        <img src="/uploads/@Model.ImageAddress" style="position: relative !important" alt="">
+        @{
+            if (Model.DiscountStatus == true && Model.DiscountPercent > 0 && Model.DiscountEnd > DateTime.Now)
+            {
+
+                <span class="DiscountCard" style="font-size: 20px">@Model.DiscountPercent%</span>
+            }
+        }
+
+    </div>
+
+    @{
+        if (Model.DiscountStatus == true && Model.DiscountPercent > 0 && Model.DiscountEnd > DateTime.Now)
+        {
+            <div id="discount-timer" class="discount-timer-box">
+                تخفیف تا <i id="countdown"></i>
+            </div>
+
+        }
+    }
+    <h1 > @Model.CourseName
+
+    </h1>
+
+    <p class="Course-Desc">
+        @Model.ShortDescription
+
+    </p>
+    <div class="Course-btn-Container">
+        @{
+            if (TempData["Ended"] != null)
+            {
+                <div class="alert alert-warning">
+                    این دوره به پایان رسیده و امکان ثبت‌نام وجود ندارد.
+                </div>
+            }
+            if (TempData["Full"] != null)
+            {
+                <div class="alert alert-warning">
+                    ظرفیت این دوره تکمیل شده است
+                </div>
+            }
+
+            if (TempData["NotLogin"] != null)
+            {
+                <div class="alert alert-warning">
+                    برای شرکت در دوره ابتدا وارد حساب خود شوید.
+                </div>
+            }
+
+            if (TempData["Already"] != null)
+            {
+                <div class="alert alert-warning">
+                    شما قبلاً در این دوره شرکت کرده‌اید.
+                </div>
+            }
+
+            if (ViewBag.Member == "True")
+            {
+                <span class="participated">شما در این دوره شرکت کرده‌اید</span>
+            }
+            else if (!User.Identity.IsAuthenticated)
+            {
+                // کاربر لاگین نکرده
+                if (Model.IsFree != true && Model.TotalPrice > 0)
+                {
+                    if (Model.DiscountStatus == true && Model.DiscountPercent > 0)
+                    {
+                        <span class="DiscountPrice">@Model.BasicPrice?.ToString("#,0.##") تومان</span>
+
+
+                    }
+                    <span class="Participeted2">@Model.TotalPrice?.ToString("#,0.##") تومان</span>
+                }
+
+                <a href="/login">ورود به حساب <i class="fa-solid fa-graduation-cap" style="padding-right: 10px;"></i></a>
+            }
+            else
+            {
+                // کاربر لاگین کرده
+                if (Model.Status == Course.StatusCourse.Ended)
+                {
+                    <span class="ended">این دوره تمام شده است</span>
+                }
+                else
+                {
+                    if (Model.IsFree == true || Model.TotalPrice == 0)
+                    {
+                        <span class="Participeted2">رایگان</span>
+                        <a href="/Payment/CreateFactor/@Model.Id">ثبت‌نام در دوره <i class="fa-solid fa-graduation-cap" style="padding-right: 10px;"></i></a>
+                    }
+                    else
+                    {
+                        if (Model.DiscountStatus == true && Model.DiscountPercent > 0)
+                        {
+                            <span class="DiscountPrice">@Model.BasicPrice?.ToString("#,0.##") تومان</span>
+
+                        }
+
+                        <span class="Participeted2">@Model.TotalPrice?.ToString("#,0.##") تومان</span>
+                        <a href="/Payment/CreateFactor/@Model.Id">ثبت‌نام در دوره <i class="fa-solid fa-graduation-cap" style="padding-right: 10px;"></i></a>
+
+                    }
+                }
+            }
+        }
+
+    </div>
+</div>
+<div class="Course-Main2">
+
+<div class="Sidebar">
+    <div class="Master">
+        <img src="/uploads/@Model.Master.ImageAddress" alt="">
+        <h3>@Model.Master.MasterFullName</h3>
+        <span>مدرس دوره</span>
+        <p>
+            @Model.Master.MasterDescreption
+        </p>
+
+    </div>
+
+    <div class="Info-Continer">
+        @{
+            if (Model.NumberOfSessions != null)
+            {
+                <div class="Info">
+                    <i class="fa-solid fa-clock"></i>
+                    <span class="Info-Title">مدت دوره:</span>
+                    <span class="Info-Body">@Model.NumberOfSessions جلسه </span>
+                </div>
+            }
+        }
+        @{
+            if (@Model.DateStart != null)
+            {
+                <div class="Info">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span class="Info-Title">تاریخ شروع:</span>
+                    <span class="Info-Body">@ShamsiService.ToShamsi((DateTime)Model.DateStart) </span>
+                </div>
+            }
+        }
+        @{
+            if (@Model.DateEnd != null)
+            {
+                <div class="Info">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span class="Info-Title">تاریخ پایان:</span>
+                    <span class="Info-Body">@ShamsiService.ToShamsi((DateTime)Model.DateEnd) </span>
+                </div>
+            }
+        }
+
+        <div class="Info">
+            <i class="fa-solid fa-hourglass-end"></i>
+            <span class="Info-Title">وضعیت:</span>
+            <span class="Info-Body">
+
+                @{
+                    string selectedText = Model.Status switch
+                    {
+                        Course.StatusCourse.Ended => "پایان یافته",
+                        Course.StatusCourse.InProgress => "در حال برگزاری",
+                        Course.StatusCourse.NotStarted => "در انتظار شروع",
+                        Course.StatusCourse.Regstering => "در حال ثبت نام",
+                        _ => "نامشخص"
+                        };
+                }
+                @selectedText
+            </span>
+        </div>
+        @{
+            if (Model.Capacity != null)
+            {
+                <div class="Info">
+                    <i class="fa-solid fa-users"></i>
+                    <span class="Info-Title">ظرفیت:</span>
+                    <span class="Info-Body">@Model.Capacity </span>
+                </div>
+            }
+        }
+        <div class="Info">
+            <i class="fa-solid fa-layer-group"></i>
+            <span class="Info-Title">دسته بندی :</span>
+            <span class="Info-Body">@Model.CourseGroup.GroupName </span>
+        </div>
+        @{
+            if (Model.AgeGroupId != null)
+            {
+                <div class="Info">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span class="Info-Title">رده سنی :</span>
+                    <span class="Info-Body">@Model.AgeGroup.AgeName </span>
+                </div>
+            }
+        }
+    </div>
+    <div class="gallery-container">
+        <span class="Course-Images">تصاویر دوره</span>
+
+        <!-- ساختار اسلایدر -->
+        <div class="swiper gallerySwiper">
+            <div class="swiper-wrapper">
+                @foreach (var item in Model.CourseGalleries)
+                {
+                    <div class="swiper-slide">
+                        <img src="/uploads/Gallery/@item.ImageAddrress" alt="@item.ImageTite" class="gallery-item">
+                        @if (!string.IsNullOrEmpty(item.ImageTite))
+                        {
+                            <div class="image-caption">@item.ImageTite</div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- کنترل‌های ناوبری -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+
+            <!-- پاگینیشن -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+
+    <!-- استایل‌های اختصاصی -->
+
+
+    <!-- اسکریپت Swiper -->
+
+    <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // مقداردهی اولیه اسلایدر گالری
+                    var gallerySwiper = new Swiper('.gallerySwiper', {
+                        loop: true,
+                        autoplay: {
+                            delay: 5000,
+                            disableOnInteraction: false,
+                        },
+                        speed: 800,
+                        effect: 'slide',
+                        grabCursor: true,
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                  
+                    });
+                });
+            </script>
+
+    <!-- نمایش تصویر بزرگ -->
+    <div id="lightbox" class="lightbox">
+        <span class="close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <div class="Article-Link">
+        <img src="/images/300-63inst.jpg" alt="">
+        <img src="/images/300-63tel.jpg" alt="">
+    </div>
+</div>
+<div class="Desc">
+    <h2>توضیحات:</h2>
+    <p>
+        @Html.Raw(Model.FullDescription)
+    </p>
+    <div class="Tag-Container">
+        @{
+            if (!string.IsNullOrWhiteSpace(Model.Tags))
+            {
+                foreach (var tag in Model.Tags.Split('-', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var trimmedTag = tag.Trim();
+                    <a href="/course/archive?search=@trimmedTag">
+                        <span><i class="fa-solid fa-hashtag"></i> @trimmedTag </span>
+                    </a>
+                }
+            }
+        }
+    </div>
+
+
+</div>
+@{
+    if (Model.Episodes.Any())
+    {
+        <div class="Episode-Container">
+            <span>سرفصل های دوره</span>
+            @foreach (var VARIABLE in Model.Episodes)
+            {
+
+                <div id="episodes">
+                    <!-- مثال فقط برای یکی از اپیزودها -->
+                    <div class="episode">
+                        <div class="episode-header" onclick="toggleEpisode(this)">
+                            @VARIABLE.Title
+                            <i class="fa-solid fa-angle-down"></i>
+                        </div>
+                        <div class="episode-content">
+                            <p>@VARIABLE.Description</p>
+                            <div class="episode-buttons">
+
+                                @{
+                                    if (!VARIABLE.IsFree)
+                                    {
+                                        if (!User.Identity.IsAuthenticated)
+                                        {
+                                            <span class="alert-warning">برای دانلود محتوا ابتدا وارد حساب کاربری خود شوید</span>
+                                            <a href="/login">ورود</a>
+
+                                        }
+                                        if (ViewBag.Member == "True")
+                                        {
+                                            <a href="/Download/Downloadfile/@VARIABLE.Id">⬇️ دانلود</a>
+                                            <span class="FileSize"> حجم فایل : @($"{(VARIABLE.FileSize / 1024.0 / 1024.0):0.##} مگابایت")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="alert-warning">شما در این دوره شرکت نکردید</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <a href="/Download/Downloadfile/@VARIABLE.Id">⬇️ دانلود</a>
+                                        <span class="FileSize"> حجم فایل : @($"{(VARIABLE.FileSize / 1024.0 / 1024.0):0.##} مگابایت")</span>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                            function toggleEpisode(header) {
+                            const content = header.nextElementSibling;
+                            content.classList.toggle("open");
+                            }
+                        </script>
+            }
+        </div>
+
+    }
+}
+<div class="Comment-Section">
+    @{
+        if (User.Identity.IsAuthenticated)
+        {
+            <h4>دیدگاه کاربران</h4>
+            <div class="Comment-Container">
+                <div class="Comment-Header">
+                    @{
+                        if (ViewBag.Image != null)
+                        {
+                            <img src="/Uploads/UserImage/@ViewBag.Image" alt="">
+                        }
+                        else
+                        {
+                            <img src="/Images/user.svg" alt="">
+                        }
+                    }
+                    <div class="DateName">
+                        <span>@User.Identity.Name</span><br>
+
+                    </div>
+                </div>
+                <textarea name="" id="newComment" placeholder="متن خود را وارد کنید..." cols="30" rows="10"></textarea>
+                <button class="send" onclick="submitComment()"> ثبت دیدگاه</button>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger" style="background-color: #FFF3CD; color: #8D6604">برای نظر دادن لطفا <a href="/login">وارد</a> حساب کاربری خود شوید </div>
+        }
+    }
+
+
+    @{
+        void RenderComments(List<Comment> comments, int? parentId = null, int level = 0)
+        {
+            var children = comments.Where(c => c.ParentId == parentId).ToList();
+
+            foreach (var comment in children)
+            {
+                <div class="Comment-Container" id="comment-@comment.Id">
+                    <div class="Comment-Header">
+                        @{
+                            if (!string.IsNullOrEmpty(comment.User?.ImageAddress))
+                            {
+                                <img src="/uploads/UserImage/@comment.User.ImageAddress" alt="">
+                            }
+                            else
+                            {
+                                <img src="/images/user.svg" alt="">
+                            }
+                        }
+                        <div class="DateName">
+                            <span>@comment.User?.Name</span><br>
+                            <span class="Comment-Date">@ShamsiService.ToShamsi(comment.CreateTime)</span>
+                        </div>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <button class="Reply" onclick="toggleReplyBox(@comment.Id)">پاسخ</button>
+                        }
+                    </div>
+
+                    <p>@comment.CommentText</p>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div id="replyBox-@comment.Id" class="reply-box" style="display: none;">
+                            <textarea name="" id="replyText-@comment.Id" placeholder="متن خود را وارد کنید..." cols="30" rows="10"></textarea>
+                            <input type="hidden" id="parentId-@comment.Id" value="@comment.Id"/>
+                            <button class="send" onclick="submitComment(@comment.Id)">ثبت پاسخ</button>
+                        </div>
+                    }
+
+                    <!-- پاسخ‌های این کامنت -->
+                    @{
+                        RenderComments(comments, comment.Id, level + 1);
+                    }
+                </div>
+            }
+        }
+    }
+
+    <!-- حالا فقط یک بار تابع رو صدا می‌زنیم -->
+    @if (Model.Comments.Any())
+    {
+        RenderComments(Model.Comments.Where(p => p.IsApproved == true).ToList());
+    }
+
+</div>
+</div>
+
+
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    let courseId = @Model.Id; // مقدار دوره را قبل از استفاده تنظیم کن
+
+    function toggleReplyBox(commentId) {
+        let replyBox = document.getElementById("replyBox-" + commentId);
+        replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
+    }
+
+    function submitComment(parentId) {
+        let text = parentId ? document.getElementById("replyText-" + parentId).value : document.getElementById("newComment").value;
+
+        if (!text.trim()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'خطا!',
+                text: 'متن نظر نمی‌تواند خالی باشد.',
+                confirmButtonText: 'باشه'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: "/Course/CommentAdd",
+            type: "POST",
+            data: { CourseId: courseId, CommentText: text, ParentId: parentId },
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'موفق!',
+                    text: 'نظر شما با موفقیت ثبت شد و پس از بررسی منتشر خواهد شد',
+                    confirmButtonText: 'باشه'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا!',
+                    text: 'مشکلی در ارسال نظر پیش آمد.',
+                    confirmButtonText: 'باشه'
+                });
+            }
+        });
+    }
+
+
+</script>
+
+
+
+// <script>
+//         document.querySelectorAll('.gallery-item').forEach(img => {
+//     img.addEventListener('click', function() {
+//         document.getElementById('lightbox').style.display = 'flex';
+//         document.getElementById('lightbox-img').src = this.src;
+//     });
+// });
+
+// document.querySelector('.close').addEventListener('click', function() {
+//     document.getElementById('lightbox').style.display = 'none';
+// });
+
+//     </script>
+<script>
+  // مقدار تاریخ پایان تخفیف رو از سرور با Razor بفرست
+  const discountEnd = new Date('@Model.DiscountEnd?.ToString("yyyy-MM-ddTHH:mm:ss")');
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = discountEnd - now;
+
+    if (diff <= 0) {
+      document.getElementById("discount-timer").innerText = "تخفیف به پایان رسید";
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("countdown").innerText =
+      `${days} روز ${hours} ساعت ${minutes} دقیقه ${seconds} ثانیه`;
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>

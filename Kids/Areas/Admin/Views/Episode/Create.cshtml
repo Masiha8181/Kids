@@ -1,0 +1,67 @@
+﻿@model Kids.Areas.Admin.AdminDTO.CreateEpisodeDTO
+@{
+    ViewData["Title"] = "ایجاد فایل جدید برای دوره";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ایجاد فایل جدید برای دوره @ViewBag.Name</h1>
+<form action="/Admin/Episode/Create" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+
+        <label class="form-label"> عنوان فایل==> باید یکتا باشد  :</label>
+        <br />
+        <span asp-validation-for="Title"></span>
+        <input asp-for="Title" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <input asp-for="CourseId" value="@ViewBag.Id" type="hidden" class="form-control">
+        <label class="form-label"> فایل :</label>
+        <br />
+        <span asp-validation-for="FilePath"></span>
+        <input asp-for="FilePath" id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+    </div>
+    <div class="mb-3">
+        <img id="imagePreview" src="" alt="تصویر انتخاب‌شده" style="max-width: 200px; display: none; border: 1px solid #ddd; padding: 5px;">
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label"> توضیحات  :</label>
+        <br />
+        <span asp-validation-for="Description"></span>
+        <input asp-for="Description" type="text" class="form-control">
+    </div>
+    <div class="mb-3">
+
+        <label class="form-label"> رایگان باشد؟  :</label>
+        <br />
+        <span asp-validation-for="IsFree"></span>
+        <input asp-for="IsFree" type="checkbox" >
+    </div>
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-success" value="ایجاد">
+        <a href="/Admin/Episode/ShowCourseEpisode/@ViewBag.Id" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById("imagePreview");
+            img.src = reader.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

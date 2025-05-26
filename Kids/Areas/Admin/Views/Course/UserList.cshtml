@@ -1,0 +1,93 @@
+﻿@model IEnumerable<Kids.Models.User>
+@{
+    ViewData["Title"] = "لیست کاربران";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+<h1 data-course-id="@ViewBag.iD">لیست کاربران دوره @ViewBag.Name</h1>
+<h2>مجموع:@Model.Count()</h2>
+<div class="table-responsive">
+    <a href="/Admin/course/addusertocourse/@ViewBag.Id" class="btn btn-success" style="margin: 20px 0px;">اضافه کردن کاربر به دوره @ViewBag.Name</a>
+
+    <table class="table table-striped">
+        <tr>
+
+          
+            <td>نام و نام خانوادگی</td>
+            <td>شماره موبایل</td>
+            
+            <td>آیا فعال است؟</td>
+            <td>عملیات</td>
+        </tr>
+
+        @{
+            foreach (var items in Model)
+            {
+                <tr id="row-@items.Id">
+                   
+                    <td>
+                        @items.Name
+                    </td>
+                    <td>
+                        @items.PhoneNumber
+                    </td>
+                 
+                    <td>
+                        @items.IsActive
+                    </td>
+                    <td>
+
+                        <a class="btn btn-danger delete-btn" data-user-id="@items.Id" data-course-id="@ViewBag.Id"> حذف کاربر از دوره</a>
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+    <a href="/Admin/Course/index" class="btn btn-primary">بازگشت</a>
+</div>
+
+
+<script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let userId = this.getAttribute("data-user-id");
+                let courseId = this.getAttribute("data-course-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Course/DeleteUser`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                           body: JSON.stringify({ userId: userId, courseId: courseId })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("حذف شد!", "کاربر از دوره حذف شد.", "success");
+                                document.getElementById(`row-${userId}`).remove(); // حذف ردیف از جدول
+                            } else {
+                                Swal.fire("خطا!", "حذف انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+
+
+</script>

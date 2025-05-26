@@ -1,0 +1,42 @@
+﻿@model List<Course>
+<div class="productlist">
+    @{
+
+        foreach (var VARIABLE in Model)
+        {
+
+            <a href="/Course/@VARIABLE.Id/@VARIABLE.CourseName.Replace(" ", "-")" style="text-decoration: none;">
+
+                <div class="productcard">
+
+                    <img src="/uploads/@VARIABLE.ImageAddress" alt="">
+                    <div class="productcard-price">
+                        <span class="card-title">@VARIABLE.CourseName</span>
+                        <span class="catcard">@VARIABLE.CourseGroup.GroupName</span>
+                        <p style="display: inline-block; width: 90%; text-align: justify; height: 130px;color: #1e345a"> @VARIABLE.ShortDescription</p>
+                        @{
+                            if (VARIABLE.DiscountStatus==true&&VARIABLE.DiscountPercent>0)
+                            {
+                                <span class="DiscountCard">تخفیف :@VARIABLE.BasicPrice?.ToString("#,0.##") تومان</span>
+                            }
+                        }
+                        @{
+                            if (VARIABLE.IsFree==true||VARIABLE.BasicPrice<=0||VARIABLE.TotalPrice<=0)
+                            {
+                                <span class="card-price">رایگان</span>
+                            }
+                            else
+                            {
+                                <span class="card-price">@VARIABLE.TotalPrice?.ToString("#,0.##") تومان</span>
+                            }
+                        }
+                               
+
+                    </div>
+                </div>
+            </a>
+
+        }
+
+    }
+</div>

@@ -1,0 +1,47 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Kids.Models
+@model Kids.Areas.Admin.AdminDTO.EditAgeGroupDTO
+@{
+    ViewData["Title"] = "ویرایش";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ویرایش رده سنی</h1>
+<form action="/Admin/AgeGroup/Edit" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <label class="form-label">نام گروه:</label>
+        <br />
+        <span asp-validation-for="AgeName"></span>
+        <input asp-for="AgeName" value="@Model.AgeName" type="text" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <input name="ImageUpload" id="ImageUpload" type="file" class="form-control" onchange="previewImage(event)">
+        <img id="imagePreview" src="/uploads/Agegroups/@Model.ImageAddress" alt="تصویر انتخاب ‌شده" style="max-width: 200px; border: 1px solid #ddd; padding: 5px;">
+    </div>
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-warning" value="ویرایش">
+        <a href="/Admin/AgeGroup/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var img = document.getElementById("imagePreview");
+            img.src = reader.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>

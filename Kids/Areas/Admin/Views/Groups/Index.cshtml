@@ -1,0 +1,143 @@
+﻿@using Kids.Models
+@model IEnumerable<Kids.Models.CourseGroup>
+
+@{
+    ViewData["Title"] = "لیست گروه‌ها";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+
+    void RenderGroups(IEnumerable<CourseGroup> groups, int? parentId)
+    {
+        var subGroups = groups.Where(p => p.ParentId == parentId).ToList();
+        if (subGroups.Any())
+        {
+            <ul class="group-list">
+                @foreach (var group in subGroups)
+                {
+                    <li id="row-@group.Id">
+                        <span class="group-name">@group.GroupName</span>
+                        <img style="width: 20px; display: inline-block; margin: 10px;" src="/uploads/GroupsImage/@group.ImageAddress"/>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="@group.Id"> حذف</button>
+                        <a href="/Admin/groups/Edit/@group.Id" class="btn btn-sm btn-warning "> ویرایش</a>
+
+                        @{ RenderGroups(groups, group.Id);}<!-- نمایش زیرگروه‌ها -->
+                    </li>
+                }
+            </ul>
+        }
+    }
+}
+
+<h1 class="title">لیست گروه‌ها</h1>
+
+<div class="container">
+    <a href="/Admin/groups/Create" class="btn btn-success create-btn">+ ایجاد گروه جدید</a>
+
+    <div class="group-container">
+        @{ RenderGroups(Model, null);} <!-- نمایش گروه‌های اصلی -->
+    </div>
+</div>
+
+<!-- استایل برای ظاهر بهتر -->
+<style>
+    .title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .container {
+        width: 80%;
+        margin: auto;
+    }
+
+    .create-btn {
+        display: block;
+        margin: 10px auto;
+        width: fit-content;
+    }
+
+    .group-container {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .group-list {
+        list-style-type: none;
+        padding-left: 20px;
+    }
+
+        .group-list li {
+            padding: 8px;
+            margin: 5px 0;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    .group-name {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .delete-btn {
+        background-color: red;
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        margin: 0px 20px;
+    }
+
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+</style>
+
+<!-- اسکریپت حذف آیتم‌ها با SweetAlert -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let itemId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/groups/Deleteitem/${itemId}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("حذف شد!", "آیتم موردنظر حذف شد.", "success");
+                                document.getElementById(`row-${itemId}`).remove();
+                            } else {
+                                Swal.fire("خطا!", "حذف انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>

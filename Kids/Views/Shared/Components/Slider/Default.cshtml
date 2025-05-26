@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Slider>
+
+@{
+    if (Model != null && Model.Any())
+    {
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                @foreach (var slider in Model)
+                {
+                    <div class="swiper-slide">
+                        <div class="light-effect"></div>
+                        <div class="light-effect"></div>
+                        <img src="~/uploads/Slider/@slider.ImageAddress" alt="@slider.Title" class="slide-bg">
+                        @if (!string.IsNullOrEmpty(slider.Title) || !string.IsNullOrEmpty(slider.Descreption))
+                        {
+                            <div class="slide-content">
+                                <h1>@slider.Title</h1>
+                                <h2>@slider.Descreption</h2>
+                                @if (!string.IsNullOrEmpty(slider.LinkText))
+                                {
+                                    <a href="@slider.Linkhref" class="slide-link">@slider.LinkText</a>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- دکمه‌های ناوبری -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+
+            <!-- پاگینیشن -->
+            <div class="swiper-pagination"></div>
+        </div>
+    }
+    else
+    {
+        <div class="Landing">
+            <div class="Landing-Right">
+                <h1>خانه مادر و کودک ایرانی</h1>
+                <h2>
+                    لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و
+                    متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است
+                </h2><br>
+                <a href="" class="link">همین الان شروع کنید</a>
+            </div>
+            <div class="Landing-Left">
+                <img src="/images/5180112.png" alt="">
+            </div>
+        </div>
+    }
+}
+
+
+<!-- فقط یک بار کتابخانه Swiper را لود کنید -->
+
+
+
+
+<!-- لود کتابخانه در انتهای صفحه -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const swiper = new Swiper('.swiper-container', {
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            speed: 1000,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+    });
+</script>

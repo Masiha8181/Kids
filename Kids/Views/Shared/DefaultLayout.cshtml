@@ -1,0 +1,190 @@
+﻿@using System.Web
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<html lang="en" dir="rtl">
+@{
+    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var rawTitle = ViewData["Title"]?.ToString() ?? "خانه مادر و کودک ایرانی";
+    var shortTitle = rawTitle.Length > 60 ? HttpUtility.HtmlEncode(rawTitle.Substring(0, 57)) + "..." : HttpUtility.HtmlEncode(rawTitle);
+
+    var rawDesc = ViewData["MetaDescription"]?.ToString() ?? "پلتفرم تخصصی آموزش و تربیت کودک، ارائه دهنده محتوای آموزشی، بازی‌های خلاقانه و مشاوره تخصصی برای مادران و کودکان";
+    var shortDesc = rawDesc.Length > 160 ? HttpUtility.HtmlEncode(rawDesc.Substring(0, 157)) + "..." : HttpUtility.HtmlEncode(rawDesc);
+
+    var articleId = ViewData["IDD"]?.ToString();
+    var articleName = ViewData["Name"]?.ToString()?.Replace(" ", "-") ?? "article";
+    var canonicalUrl = $"{baseUrl}/Article/{articleId}/{System.Net.WebUtility.UrlEncode(articleName)}";
+
+    // JSON-LD for Article
+    // var jsonLdArticleObject = new
+    // {
+    //     context = "https://schema.org",
+    //     type = "Article",
+    //     headline = ViewData["Title"]?.ToString() ?? "",
+    //     image = HttpUtility.JavaScriptStringEncode($"{baseUrl}{ViewData["OgImage"] ?? "/images/logo.png"}"),
+    //     datePublished = ViewData["datePublished"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd"),
+    //     dateModified = ViewData["dateModified"]?.ToString() ?? ViewData["datePublished"]?.ToString() ?? DateTime.Now.ToString("yyyy-MM-dd"),
+    //     author = new
+    //     {
+    //         type = "Person",
+    //         name = HttpUtility.JavaScriptStringEncode("خانه مادر و کودک ایرانی"),
+    //         url = HttpUtility.JavaScriptStringEncode($"{baseUrl}/author/{System.Net.WebUtility.UrlEncode("خانه مادر و کودک ایرانی".Replace(" ", "-"))}")
+    //     },
+    //     publisher = new
+    //     {
+    //         type = "Organization",
+    //         name = "خانه مادر و کودک ایرانی",
+    //         logo = new
+    //         {
+    //             type = "ImageObject",
+    //             url = $"{baseUrl}/images/logo.png",
+    //             width = "600",
+    //             height = "60"
+    //         }
+    //     },
+    //     description = HttpUtility.JavaScriptStringEncode(ViewData["MetaDescription"]?.ToString() ?? ""),
+    //     mainEntityOfPage = new
+    //     {
+    //         type = "WebPage",
+    //         id = HttpUtility.JavaScriptStringEncode(canonicalUrl)
+    //     },
+    //     aggregateRating = new
+    //     {
+    //         type = "AggregateRating",
+    //         ratingValue = ViewBag.Rate?.ToString() ?? "0",
+    //         reviewCount = ViewBag.RateCount?.ToString() ?? "0",
+    //         bestRating = "5",
+    //         worstRating = "1"
+    //     }
+    // };
+
+    // // JSON-LD for Breadcrumb
+    // var jsonLdBreadcrumbObject = new
+    // {
+    //     context = "https://schema.org",
+    //     type = "BreadcrumbList",
+    //     itemListElement = new[]
+    //     {
+    //         new
+    //         {
+    //             type = "ListItem",
+    //             position = 1,
+    //             name = "خانه",
+    //             item = baseUrl
+    //         },
+    //         new
+    //         {
+    //             type = "ListItem",
+    //             position = 2,
+    //             name = "مقالات",
+    //             item = $"{baseUrl}/articles"
+    //         },
+    //         new
+    //         {
+    //             type = "ListItem",
+    //             position = 3,
+    //             name = HttpUtility.JavaScriptStringEncode(ViewData["Title"]?.ToString() ?? ""),
+    //             item = HttpUtility.JavaScriptStringEncode(canonicalUrl)
+    //         }
+    //     }
+    // };
+
+    // var jsonLdArticle = System.Text.Json.JsonSerializer.Serialize(jsonLdArticleObject, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+    // var jsonLdBreadcrumb = System.Text.Json.JsonSerializer.Serialize(jsonLdBreadcrumbObject, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/fav.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- SEO Meta -->
+    <title>@Html.Raw(shortTitle)</title>
+    <meta name="description" content="@Html.Raw(shortDesc)" />
+    <meta name="keywords" content="مهد کودک تهران, بهترین مهد کودک های تهران, مهد کودک خوب در تهران, مهد کودک منطقه ۴, لیست مهدکودک های منطقه ۴ تهران, مهدکودک نزدیک من, مهد کودک لاکچری تهران, شهریه مهد کودک در تهران, ثبت نام مهدکودک, آموزش کودکان پیش دبستانی, مرکز مادر و کودک در تهران, مهد کودک مادر و کودک, آموزش مادر و کودک در تهران, فعالیت‌های مادر و کودک, کلاس مادر و کودک تهران, بازی‌های مادر و کودک, مشاوره مادر و کودک, مراکز تخصصی مادر و کودک" />
+    <meta name="author" content="خانه مادر و کودک ایرانی" />
+    <link rel="canonical" href="@canonicalUrl" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="@Html.Raw(shortTitle)" />
+    <meta property="og:description" content="@Html.Raw(shortDesc)" />
+    <meta property="og:image" content="@(ViewData["OgImage"] ?? baseUrl + "/images/logo.png")" />
+    <meta property="og:url" content="@(ViewData["OgUrl"] ?? canonicalUrl)" />
+    <meta property="og:type" content="article" />
+    <meta property="og:locale" content="fa_IR" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@Html.Raw(shortTitle)" />
+    <meta name="twitter:description" content="@Html.Raw(shortDesc)" />
+    <meta name="twitter:image" content="@(ViewData["TwitterImage"] ?? baseUrl + "/images/logo.png")" />
+
+    <!-- JSON-LD -->
+
+
+    <!-- External Resources -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <meta name="google-site-verification" content="KKT_NkTSZ9w7sIYFLJs2CF8FN3Pb8qIPJ4WhiDoS7LY" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/respopnsive.css" />
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css" />
+    <script src="/js/script.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="/JalaliDatePicker-main/JalaliDatePicker-main/dist/jalalidatepicker.min.css" />
+    <script src="/JalaliDatePicker-main/JalaliDatePicker-main/dist/jalalidatepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="/toastr-master/toastr-master/build/toastr.css" rel="stylesheet" />
+    <script src="/toastr-master/toastr-master/build/toastr.min.js"></script>
+</head>
+<body>
+
+@await Component.InvokeAsync("Header")
+
+@RenderBody()
+
+<footer>
+    <div class="Footer-Div">
+        <img src="/images/logo.png" alt="" class="Footer-Logo">
+        <br>
+        <h5 class="Footer-Desc">
+            مرکز تخصصی آموزش و مشاوره مادر و کودک در منطقه 4 تهران (تهرانپارس)
+            <br>
+            ارائه دهنده دوره‌های آموزشی، کارگاه‌های عملی و مقالات تخصصی فرزندپروری
+            <br>
+            با تیم متخصصین کودک و روانشناسان مجرب
+        </h5>        <p class="Footer-Desc" style="text-align: center;"> <a href=""><img src="/images/insta.webp" alt="" id="Insta"></a>
+            <a href=""><img src="/images/whatsapp_logo_icon_154480.webp" alt="" id="Insta"></a>
+            <a href=""><img src="/images/Eitaa-vector-logo.png" alt="" id="Insta"></a>
+            <a href=""><img src="/images/Telegram_2019_Logo.svg.webp" alt="" id="Insta"></a></p>
+    </div>
+    <div class="Footer-Div">
+        <span class="Footer-Title">لینک های سریع</span>
+        <ul>
+            <a href="/"><li>صفحه اصلی</li></a>
+            <a href="/Course/Archive"><li>دوره ها</li></a>
+            <a href="/Article/Archive"><li>مقالات</li></a>
+            <a href="/DashBoard"><li>حساب کاربری</li></a>
+            <a href="/ContactUS"><li>تماس با ما</li></a>
+
+        </ul>
+    </div>
+    <div class="Footer-Div">
+        <h4 class="Footer-Title"> نشانی خانه مادر و کودک ایرانی</h4>
+        <ul>
+            <a href=""><li><i class="fa-solid fa-location-dot"></i>تهرانپارس ، بین فلکه دوم و سوم تهرانپارس ، خیابان 188 شرقی (شهید رحمانی) ،  پلاک 102</li></a>
+            <a href=""> <li><i class="fa-solid fa-phone"></i>تلفن مشاوره ثبت نام  : 76703980</li></a>
+            <a href=""><li><i class="fa-solid fa-calendar-day"></i>شنبه تا چهارشنبه : 9 الی 18</li></a>
+        </ul>
+    </div>
+
+</footer>
+<div class="Licence"><p>تمام حقوق برای مادر کودک ایرانی محفوظ است © <i class="fa-solid fa-heart" style="color: red;"></i></p> </div>
+</body>
+
+</html>

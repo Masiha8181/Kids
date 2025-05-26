@@ -1,0 +1,198 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<header>
+
+    <nav>
+        <div class="Mobile-Nav">
+            <div class="Mobile-Burgur-Icon">
+                <i class="fa-solid fa-bars" id="Bar"></i>
+            </div>
+            <div class="Mobile-Logo">
+                <a href="/"> <img src="/images/logo.png" alt=""></a>
+            </div>
+            <div class="Mobile-User-Icon">
+                <a href="/DashBoard">
+                    <i class="fa-solid fa-user"></i>
+                </a>
+            </div>
+        </div>
+        <div id="overlay"></div>
+        <div class="Mobile-Menu" id="Menu">
+            <i class="fa-solid fa-xmark" id="Close"></i>
+            <div class="Logo2">
+                <a href="/"> <img src="/images/logo.png" alt=""></a>
+
+            </div>
+            <form action="/Search" method="get">
+                <input type="text" name="KeyWord" placeholder="جستجو در سایت...">
+            </form>
+            <div class="Mobile-Container">
+                <ul class="cute-list">
+                    <li><a href="/">صفحه اصلی</a></li>
+                    <li class="flip"><a>حساب کاربری  <i class="fa-solid fa-arrow-down"></i></a>
+
+                    </li>
+                    <ul class="panel" style="   display: none;">
+                        @{
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                <li> <a href="/DashBoard">پروفایل</a></li>
+                                <li> <a href="/EditProfile">ویرایش اطلاعات</a></li>
+                                <li> <a href="/ChangePhoneNumber">تغییر شماره موبایل</a></li>
+                                <li> <a href="/ChangePassword">تغییر رمز عبور</a></li>
+                                <li> <a href="/UserCourse">دوره های من</a></li>
+                                <li> <a href="/UserFactor">فاکتور های من</a></li>
+                                <li> <a href="/Logout">خروج</a></li>
+                            }
+                            else
+                            {
+                                <li> <a href="/Login">ورود</a></li>
+                                <li> <a href="/Register">ثبت نام</a></li>
+                            }
+                        }
+                        
+                    </ul>
+                    <li class="flip">
+                        <a>دسته بندی دوره ها <i class="fa-solid fa-arrow-down"></i></a>
+
+                    </li>
+                <ul class="panel" style="   display: none;">
+                 @{
+                     if (ViewBag.CourseGroups!=null)
+                     {
+                         <li> <a href="/Course/archive">همه دوره ها</a></li>
+                         foreach (var VARIABLE in ViewBag.CourseGroups as List<CourseGroup>)
+                         {
+
+                             <li> <a href="/course/archive?CourseGroups=@VARIABLE.Id">@VARIABLE.GroupName</a></li>
+                        
+                         }
+                     }
+                 }
+                </ul>
+
+                    <li class="flip">
+                        <a>رده سنی  <i class="fa-solid fa-arrow-down"></i></a>
+
+                    </li>
+                    <ul class="panel" style="   display: none;">
+                        @{
+                            if (ViewBag.CourseGroups!=null)
+                            {
+                                foreach (var VARIABLE in ViewBag.AgeGroups as List<AgeGroup>)
+                                {
+                             
+                                    <li> <a href="/course/archive?AgeGroups=@VARIABLE.Id">@VARIABLE.AgeName</a></li>
+                            
+                                }
+                            }
+                        }
+                    </ul>
+                    <li class="flip">
+                        <a>  مقالات  <i class="fa-solid fa-arrow-down"></i></a>
+
+                    </li>
+                    <ul class="panel" style="   display: none;">
+                        @{
+                            if (ViewBag.ArticleGroups!=null)
+                            {
+                                <li> <a href="/Article/archive">همه مقالات</a></li>
+                                foreach (var VARIABLE in ViewBag.ArticleGroups as List<ArticleGroup>)
+                                {
+
+                                    <li> <a href="/Article/archive?ArticleGroups=@VARIABLE.Id">@VARIABLE.GroupName</a></li>
+                        
+                                }
+                            }
+                        }
+                    </ul>
+                  
+                    <li><a href="/ContactUs">تماس با ما</a></li>
+                </ul>
+
+            </div>
+        </div>
+        <div class="NavBar-Right">
+
+            <ul class="First-UL">
+                <li><a href="/"> <img src="/images/logo.png" alt=""></a></li>
+                <li><a href="/">صفحه اصلی</a></li>
+                <li class="dropdown">
+                    <a href="/course/archive">دوره ها</a>
+                    <ul class="submenu">
+                        @{
+                            if (ViewBag.CourseGroups!=null)
+                            {
+                                foreach (var VARIABLE in ViewBag.CourseGroups as List<CourseGroup>)
+                                {
+                                    <li> <a href="/Course/Archive?CourseGroups=@VARIABLE.Id">@VARIABLE.GroupName   </a></li>
+                       
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="/course/archive">رده سنی </a>
+                    <ul class="submenu">
+                        @{
+                            if (ViewBag.AgeGroups!=null)
+                            {
+                                foreach (var VARIABLE in ViewBag.AgeGroups as List<AgeGroup>)
+                                {
+                                    <li> <a href="/Course/Archive?AgeGroups=@VARIABLE.Id">@VARIABLE.AgeName   </a></li>
+                       
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="/Article/archive">مقالات </a>
+                    <ul class="submenu">
+                        @{
+                            if (ViewBag.ArticleGroups!=null)
+                            {
+                                foreach (var VARIABLE in ViewBag.ArticleGroups as List<ArticleGroup>)
+                                {
+                                    <li> <a href="/Article/Archive?ArticleGroups=@VARIABLE.Id">@VARIABLE.GroupName   </a></li>
+                       
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+                <li><a href="/ContactUS">تماس با ما</a></li>
+            </ul>
+        </div>
+
+        <div class="NavBar-Left">
+            <div class="Header-SearchBox-Unique">
+                <form action="/Search" method="get">
+                    <input type="text" name="KeyWord" placeholder="جستجو در سایت..." />
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+
+
+            @{
+                if (!User.Identity.IsAuthenticated)
+                {
+
+                    <a href="/Register">ثبت نام</a>
+                    <a href="/Login">ورود</a>
+                }
+                else
+                {
+
+                    <a href="/Logout"> خروج</a>
+                    <a href="/Dashboard">پروفایل</a>
+                }
+            }
+
+        </div>
+    </nav>
+</header>

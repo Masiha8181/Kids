@@ -1,0 +1,8 @@
+﻿User-agent: *
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /EditProfile
+Disallow: /ChangePassword
+Disallow: /UserFactor
+
+Sitemap: https://skilschool/sitemap.xml

@@ -1,0 +1,148 @@
+﻿@model IEnumerable<Kids.Models.Factor>
+@{
+    ViewData["Title"] = "لیست فاکتور ها";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>لیست فاکتور ها</h1>
+<div class="table-responsive">
+ 
+    <table class="table table-striped">
+        <form method="get" action="/Admin/Factors/index" >
+        <div class="row" style="margin-bottom: 30px;">
+            <div class="col-2">
+                <div class="form-group">
+
+                    <label for="exampleFormControlSelect1">انتخاب نوع فاکتور</label>
+                    <select class="form-control" name="Category" id="exampleFormControlSelect1">
+                        @{
+                            @if (Context.Request.Query.ContainsKey("Category"))
+                            {
+                                string category = Context.Request.Query["Category"].ToString(); // تبدیل به string
+                                string selectedText = category switch
+                                {
+                                    "All" => "همه",
+                                    "Active" => "پرداخت شده",
+                                    "Deactive" => "پرداخت نشده",
+                                   
+                                    _ => "دسته‌بندی نامشخص"
+                                    };
+
+                                <option selected="selected" value="@category">@selectedText</option>
+                            }
+                        }
+                        }
+                        <option value=All>همه</option>
+                        <option value=Active>پرداخت شده </option>
+                        <option value=Deactive>پرداخت نشده </option>
+
+                    </select>
+
+
+                </div>
+
+            </div>
+            <input type="submit" class="btn btn-success " value="اعمال"/>
+            </div>
+        </form>
+        <tr style="margin-top: 30px;">
+
+            <td>کاربر</td>
+            <td>نام دوره</td>
+            <td>قیمت دوره</td>
+            <td>کد تخفیف استفاده شده </td>
+            <td>قیمت نهایی</td>
+            <td> وضعیت</td>
+            <td>کد پیگیری</td>
+         
+            <td>عملیات</td>
+        </tr>
+
+        @{
+            foreach (var items in Model)
+            {
+                <tr id="row-@items.Id">
+                    <td>
+                        @items.User.Name <br/>@items.User.PhoneNumber
+                        
+                    </td>
+                    <td>
+                        @items.Course.CourseName
+                    </td>
+                    <td>
+                        @items.Course.TotalPrice
+                    </td>
+                    <td>
+                       @{
+                           if (items.DiscountCodeId!=null)
+                           {
+                               @items.DiscountCode.CodeName
+                           }
+                       }
+                    </td>
+                    <td>
+                        @items.TotalPrice.ToString("#,0.##") تومان
+                    </td>
+                    <td>
+                        @items.IsFinally
+                    </td>
+                    <td>
+                        @items.RefID
+                    </td>
+                    <td>
+                        
+                        <a href="/Admin/Factors/Edit/@items.Id" class="btn btn-warning">ویرایش</a>
+                        <a class="btn btn-danger delete-btn" data-id="@items.Id">حذف</a>
+                    </td>
+                </tr>
+            }
+        }
+       
+
+    </table>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let itemId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Factors/DeleteItem/${itemId}`, {
+                            method: "POST"
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("حذف شد!", "آیتم موردنظر حذف شد.", "success");
+                                 document.getElementById(`row-${itemId}`).remove();
+                             // حذف ردیف از جدول
+                            } else {
+                                Swal.fire("خطا!", "حذف انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+
+
+
+

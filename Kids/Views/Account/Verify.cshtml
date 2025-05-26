@@ -1,0 +1,199 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    var phoneNumber = ViewData["PhoneNumber"] as string;
+    ViewData["Title"] = "تایید کد ";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+<style>
+    .code-input {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        text-align: center;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        outline: none;
+        font-family: 'Koodak';
+        margin: 20px 5px;
+    }
+</style>
+<<div class="Register-Container">
+    <h5>تایید کد  </h5>
+    <div class="Register">
+        <div class="Register-Title">
+            <img src="images/logo.png" alt=""><br>
+
+        </div>
+
+        <div class="Form-Input-Container">
+            <form id="verifyForm" asp-controller="Account" asp-action="Verify" method="post">
+                <input type="hidden" value="@phoneNumber" id="verifyPhone" name="PhoneNumber" />
+                <input type="hidden" value="" id="CompleteCode" name="Code" />
+                @{
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All" class="DangerAlert"></div>
+                    }
+                }
+                @{
+                    if (TempData["send"] != null)
+                    {
+                        <div class="Successs">
+                            کد تایید با موفقیت ارسال شد.
+                        </div>
+                    }
+                }
+                @if (ViewBag.Error == 1)
+                {
+                    <div class="DangerAlert">
+                        کد وارد شده صحیح نیست
+                    </div>
+                }
+                @if (ViewBag.Error == 2)
+                {
+                    <div class="DangerAlert">
+                        کد منقضی شده است دوباره درخواست بدید
+                    </div>
+                }
+                <div class="Form-Link">
+                    <a >   کد تایید:</a>
+                </div>
+                <div id="code-inputs" class="d-flex gap-2" dir="ltr">
+                    <input type="text" maxlength="1" class="code-input form-control text-center"/>
+                    <input type="text" maxlength="1" class="code-input form-control text-center"/>
+                    <input type="text" maxlength="1" class="code-input form-control text-center"/>
+                    <input type="text" maxlength="1" class="code-input form-control text-center"/>
+                </div>
+                <input type="submit" class="OK" value=" تایید">
+                <button class="OK2" id="sendCodeBtn">ارسال مجدد کد</button>
+                <p id="timerMessage" style="; color:#FD95A9; margin: 10px 0px;" ></p>
+                <div id="code-timer-container" style="display: none;" class="text-center my-3">
+                    <div class="position-relative d-inline-block" style="width: 80px; height: 80px;">
+                        <svg width="80" height="80">
+                            <circle cx="40" cy="40" r="35" stroke="#e0e0e0" stroke-width="5" fill="none" />
+                            <circle id="progressCircle" cx="40" cy="40" r="35" stroke="#00c853" stroke-width="5" fill="none"
+                                    stroke-linecap="round"
+                                    stroke-dasharray="220"
+                                    stroke-dashoffset="0"
+                                    transform="rotate(-90 40 40)" />
+                        </svg>
+                        <div id="timerText" class="position-absolute top-50 start-50 translate-middle fw-bold"></div>
+                    </div>
+                </div>
+
+            </form>
+        
+        
+          
+        </div>
+     
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        initCountdownOnLoad();
+        initCodeInputHandler();
+        initSendCodeHandler();
+    });
+
+    function initCountdownOnLoad() {
+        let button = document.getElementById("sendCodeBtn");
+        let timerMessage = document.getElementById("timerMessage");
+
+        button.disabled = true;
+        timerMessage.style.display = "block";
+
+        let seconds = 120;
+        let interval = setInterval(() => {
+            seconds--;
+            timerMessage.innerText = `کد ارسال شد. لطفاً ${seconds} ثانیه صبر کنید.`;
+
+            if (seconds <= 0) {
+                clearInterval(interval);
+                button.disabled = false;
+                timerMessage.style.display = "none";
+            }
+        }, 1000);
+    }
+
+    function initCodeInputHandler() {
+        const inputs = document.querySelectorAll(".code-input");
+
+        inputs.forEach((input, index) => {
+            input.addEventListener("input", (e) => {
+                const value = e.target.value;
+
+                // جمع‌کردن کد کامل
+                const fullCode = Array.from(inputs).map(i => i.value).join('');
+                document.getElementById("CompleteCode").value = fullCode;
+
+                // رفتن به input بعدی
+                if (value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Backspace" && e.target.value === "" && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+    }
+
+    function initSendCodeHandler() {
+        document.getElementById("sendCodeBtn").addEventListener("click", function () {
+            let button = this;
+            let timerMessage = document.getElementById("timerMessage");
+            let phoneNumber = document.getElementById("verifyPhone").value;
+
+            button.disabled = true;
+            timerMessage.style.display = "block";
+            timerMessage.innerText = "در حال ارسال کد...";
+
+            fetch("/ResendCode", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(phoneNumber)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    startCountdown();
+                } else {
+                    button.disabled = false;
+                    timerMessage.innerText = data.message;
+                }
+            })
+            .catch(error => {
+                button.disabled = false;
+                timerMessage.innerText = "خطایی رخ داد، دوباره تلاش کنید.";
+            });
+        });
+    }
+
+    function startCountdown() {
+        let button = document.getElementById("sendCodeBtn");
+        let timerMessage = document.getElementById("timerMessage");
+
+        button.disabled = true;
+        timerMessage.style.display = "block";
+
+        let seconds = 120;
+        let interval = setInterval(() => {
+            seconds--;
+            timerMessage.innerText = `کد ارسال شد. لطفاً ${seconds} ثانیه صبر کنید.`;
+
+            if (seconds <= 0) {
+                clearInterval(interval);
+                button.disabled = false;
+                timerMessage.style.display = "none";
+            }
+        }, 1000);
+    }
+</script>
+

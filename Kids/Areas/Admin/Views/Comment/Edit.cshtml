@@ -1,0 +1,38 @@
+﻿@model Kids.DTO.CommentDTO.EditCommentDTO
+@{
+    ViewData["Title"] = "ویرایش نظر";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<h1>ویرایش نظر</h1>
+<form action="/Admin/Comment/Edit" method="post" enctype="multipart/form-data">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" asp-validation-summary="All"></div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="mb-3">
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <label class="form-label">متن نظر:</label>
+        <br />
+        <span asp-validation-for="CommentText"></span>
+        <textarea asp-for="CommentText"   class="form-control">@Model.CommentText</textarea>
+    </div>
+    <div class="mb-3">
+       
+        <label class="form-label">تایید نظر:</label>
+        <br />
+        <span asp-validation-for="IsApproved"></span>
+        <input asp-for="IsApproved"  type="checkbox" >
+    </div>
+    <div class="mb-3">
+
+        <input type="submit" class="btn btn-warning" value="ویرایش">
+        <a href="/Admin/Comment/index" class="btn btn-primary">بازگشت</a>
+    </div>
+</form>
+
+

@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Kids.Models.Episode>
+@{
+    ViewData["Title"] = "لیست  فایل های دوره  " + ViewBag.Name;
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+<h1>  فایل های دوره @ViewBag.Name</h1>
+<div class="table-responsive">
+    <a href="/Admin/Episode/Create/@ViewBag.Id" class="btn btn-success" style="margin: 20px 20px;">ایجاد </a>
+    <table class="table table-striped">
+        <tr>
+
+            <td> نام فایل</td>
+            <td>حجم فایل </td>
+            <td> دسترسی </td>
+            <td>توضیحات فایل</td>
+
+            <td>عملیات</td>
+        </tr>
+
+        @{
+            foreach (var items in Model)
+            {
+                        <tr id="row-@items.Id">
+
+                            <td>
+                                @items.FilePath
+                            </td>
+                            <td>
+                                @($"{(items.FileSize / 1024.0 / 1024.0):0.##} MB")
+                            </td>
+                            <td>
+                                @{
+                                    if (items.IsFree==true)
+                                    {
+                                        <span>رایگان</span>
+                                    }
+                                    else
+                                    {
+                                        <span>غیر رایگان</span> 
+                                    }
+                                }
+                            </td>
+                            <td>
+                               @items.Description
+                            </td>
+                            <td>
+                                <form method="post" action="/Admin/Episode/Download" style="display:inline">
+                                    <input type="hidden" name="Name" value="@items.Id" />
+                                    <button type="submit" class="btn btn-primary">دانلود</button>
+                                </form>
+                                <a href="/Admin/Episode/Edit/@items.Id" class="btn btn-warning">ویرایش</a>
+                                <a class="btn btn-danger delete-btn" data-id="@items.Id">حذف</a>
+                            </td>
+                        </tr>
+            }
+        }
+
+    </table>
+    <a href="/Admin/Course/"class="btn btn-dark">بازگشت</a>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let itemId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "آیا مطمئن هستید؟",
+                    text: "این عملیات غیرقابل بازگشت است!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "بله، حذف شود!",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Episode/DeleteEpisode/${itemId}`, {
+                            method: "POST"
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("حذف شد!", "آیتم موردنظر حذف شد.", "success");
+                                 document.getElementById(`row-${itemId}`).remove();
+                             // حذف ردیف از جدول
+                            } else {
+                                Swal.fire("خطا!", "حذف انجام نشد!", "error");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("خطا:", error);
+                            Swal.fire("خطا!", "مشکلی پیش آمد.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+

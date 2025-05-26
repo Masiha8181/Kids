@@ -1,0 +1,26 @@
+﻿@model List<Article>
+<div class="productlist">
+    @{
+
+        foreach (var VARIABLE in Model)
+        {
+
+            <a href="/Article/@VARIABLE.Id/@VARIABLE.ArticleName.Replace(" ", "-")" style="text-decoration: none;">
+
+                <div class="productcard">
+
+                    <img src="/uploads/Article/@VARIABLE.ImageAddress" alt="">
+                    <div class="productcard-price">
+                        <span class="card-title">@VARIABLE.ArticleName</span>
+                        <span class="catcard">@VARIABLE.ArticleGroup.GroupName</span>
+                        <p style="display: inline-block; width: 90%; text-align: justify; height: 130px;color: #1e345a"> @VARIABLE.ShortDescription</p>
+                              
+
+                    </div>
+                </div>
+            </a>
+
+        }
+
+    }
+</div>
