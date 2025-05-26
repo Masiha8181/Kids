@@ -3,44 +3,40 @@
 on:
   push:
     branches:
-      - main  # اگر شاخه‌ت اسمش چیز دیگه‌ایه مثل "master"، همینجا تغییر بده
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.x'  # یا نسخه‌ای که پروژه‌ت استفاده می‌کنه
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Build
-      run: dotnet publish -c Release -o publish_output
+      - name: Build
+        run: dotnet publish -c Release -o publish_output
 
-    - name: Remove sensitive files before upload
-      run: |
-   
-
-    - name: Upload via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: publish_output/
-        server-dir: /httpdocs/
-        exclude: |
-          **/appsettings.json
-          **/web.config
-          **/wwwroot/**
-        include: |
-          **/wwwroot/js/**
-          **/wwwroot/css/**
-          **/wwwroot/Admin/**
+      - name: Upload via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: publish_output/
+          server-dir: /httpdocs/
+          dangerous-clean-slate: false
+          exclude: |
+            **/appsettings.json
+            **/appsettings.*.json
+            **/web.config
+            **/wwwroot/uploads/**
+            **/wwwroot/ckeditor/**
+            **/wwwroot/fontawesome/**
