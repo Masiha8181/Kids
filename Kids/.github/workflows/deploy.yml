@@ -1,45 +1,44 @@
-﻿name: Deploy ASP.NET Core to Plesk
+﻿name: ASP.NET Core Deploy to FTP (Plesk)
 
 on:
   push:
     branches:
-      - main  # هر وقت به شاخه main پوش کردید، این Workflow اجرا می‌شه
+      - main  # اگر شاخه‌ت اسمش چیز دیگه‌ایه مثل "master"، همینجا تغییر بده
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-    # 1. چک‌اوت کردن کد پروژه
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    # 2. نصب دات‌نت SDK
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x'  # نسخه دات‌نت پروژه‌تون رو وارد کنید
+        dotnet-version: '8.x'  # یا نسخه‌ای که پروژه‌ت استفاده می‌کنه
 
-    # 3. نصب وابستگی‌ها
     - name: Restore dependencies
       run: dotnet restore
 
-    # 4. بیلد پروژه
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet publish -c Release -o publish_output
 
-    # 5. پابلیش پروژه
-    - name: Publish
-      run: dotnet publish --configuration Release --no-build --no-restore -o ./publish
+    - name: Remove sensitive files before upload
+      run: |
+        Remove-Item -Path "publish_output\wwwroot" -Recurse -Force
+        Remove-Item -Path "publish_output\appsettings.json" -Force
+        Remove-Item -Path "publish_output\web.config" -Force
 
-    # 6. آپلود فایل‌ها به سرور Plesk از طریق FTP
-    - name: Upload to Plesk via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+    - name: Upload via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: ${{ secrets.FTP_SERVER }}  # آدرس سرور FTP
-        username: ${{ secrets.FTP_USERNAME }}  # نام کاربری FTP
-        password: ${{ secrets.FTP_PASSWORD }}  # رمز عبور FTP
-        local-dir: ./publish/  # پوشه‌ای که فایل‌های پابلیش‌شده توش هستند
-        server-dir: /httpdocs/  # مسیر روی سرور Plesk (مثلاً httpdocs)
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: publish_output
+        server-dir: /httpdocs/
         exclude: |
-          **/uploads/**  # پوشه آپلودها رو نادیده بگیر تا حذف نشن
+          **/appsettings.json
+          **/web.config
+          **/wwwroot/**
