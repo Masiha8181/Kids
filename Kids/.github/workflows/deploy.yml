@@ -26,9 +26,7 @@ jobs:
 
     - name: Remove sensitive files before upload
       run: |
-        Remove-Item -Path "publish_output\wwwroot" -Recurse -Force
-        Remove-Item -Path "publish_output\appsettings.json" -Force
-        Remove-Item -Path "publish_output\web.config" -Force
+   
 
     - name: Upload via FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
