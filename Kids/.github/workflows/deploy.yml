@@ -39,4 +39,8 @@ jobs:
         exclude: |
           **/appsettings.json
           **/web.config
-          **/wwwroot/uploads/**
+          **/wwwroot/**
+        include: |
+          **/wwwroot/js/**
+          **/wwwroot/css/**
+          **/wwwroot/Admin/**
