@@ -38,4 +38,4 @@ jobs:
         exclude: |
           **/appsettings.json
           **/web.config
-          **/wwwroot/**
+           **/wwwroot/uploads/**
