@@ -1,0 +1,44 @@
+﻿name: ASP.NET Core Deploy to FTP (Plesk)
+
+on:
+  push:
+    branches:
+      - main  # اگر شاخه‌ت اسمش چیز دیگه‌ایه مثل "master"، همینجا تغییر بده
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x'  # یا نسخه‌ای که پروژه‌ت استفاده می‌کنه
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet publish -c Release -o publish_output
+
+    - name: Remove sensitive files before upload
+      run: |
+        Remove-Item -Path "publish_output\wwwroot" -Recurse -Force
+        Remove-Item -Path "publish_output\appsettings.json" -Force
+        Remove-Item -Path "publish_output\web.config" -Force
+
+    - name: Upload via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: publish_output
+        server-dir: /httpdocs/
+        exclude: |
+          **/appsettings.json
+          **/web.config
+          **/wwwroot/**
