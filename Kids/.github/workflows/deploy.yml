@@ -3,7 +3,7 @@
 on:
   push:
     branches:
-      - master  # اگر شاخه‌ت اسمش چیز دیگه‌ایه مثل "master"، همینجا تغییر بده
+      - main  # اگر شاخه‌ت اسمش چیز دیگه‌ایه مثل "master"، همینجا تغییر بده
 
 jobs:
   build-and-deploy:
