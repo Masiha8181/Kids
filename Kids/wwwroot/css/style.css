@@ -1367,9 +1367,13 @@ width: 90%;
   margin-right: 70px;
 
 }
-.Article-Main img {
-    max-width: 90%;
-}
+    .Article-Main img {
+        max-width: 90%;
+        max-width: 90%;
+        /* margin: 0px auto; */
+        margin: 0px auto;
+        display: block;
+    }
 .Article-MainImage{
   display: inline-block;
   width: 90%;
