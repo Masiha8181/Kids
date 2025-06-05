@@ -1,0 +1,151 @@
+﻿@model List<Kids.Areas.Admin.AdminDTO.ShowFileDTO>
+
+@{
+    ViewData["Title"] = "ShowUploadFolder";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<script>
+    function returnFileUrlToCKEditor(url) {
+        var funcNum = getUrlParam('CKEditorFuncNum');
+        window.opener.CKEDITOR.tools.callFunction(funcNum, url);
+        window.close();
+    }
+
+    function getUrlParam(paramName) {
+        var reParam = new RegExp('(?:[?&]|&)' + paramName + '=([^&]+)', 'i');
+        var match = window.location.search.match(reParam);
+        return (match && match.length > 1) ? match[1] : null;
+    }
+</script>
+@{
+    var ckFuncNum = Context.Request.Query["CKEditorFuncNum"].ToString();
+}
+@{
+    var directories = ViewBag.Directories as List<DirectoryInfo>;
+}
+@{
+    @if (ViewBag.ParentFolder != null)
+    {
+
+
+        <a href="/Admin/upload/showUploadFolder?AbsloutePath=@ViewBag.ParentFolder&&CKEditorFuncNum=@ckFuncNum">بازگشت به پوشه قبل</a>
+    }
+
+}
+@if (directories != null && directories.Any())
+{
+    <h2 style="font-family: Tahoma; color: #333; margin-bottom: 20px;">لیست پوشه‌ها</h2>
+    <table style="width: 100%; border-collapse: collapse; font-family: Tahoma;">
+        <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th style="padding: 10px; border: 1px solid #ccc;">نام پوشه</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">تاریخ ایجاد</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">آخرین تغییر</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var dir in directories)
+        {
+            <tr>
+                    <td style="padding: 8px; border: 1px solid #eee; color: #0000ff"><a href="/Admin/upload/showuploadfolder?AbsloutePath=@dir.FullName&&CKEditorFuncNum=@ckFuncNum">@dir.Name</a></td>
+                <td style="padding: 8px; border: 1px solid #eee;">@dir.CreationTime.ToString("yyyy/MM/dd HH:mm")</td>
+                <td style="padding: 8px; border: 1px solid #eee;">@dir.LastWriteTime.ToString("yyyy/MM/dd HH:mm")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p style="font-family: Tahoma; color: red;">هیچ پوشه‌ای یافت نشد.</p>
+}
+<br/><br>
+<hr/>
+<br />
+<br>
+@if (Model == null || !Model.Any())
+{
+    <p style="color: red; font-family: Tahoma;">هیچ فایلی برای نمایش وجود ندارد.</p>
+}
+else
+{
+    <h2 style="font-family: Tahoma; color: #333; margin-bottom: 20px;">لیست فایل‌ها</h2>
+    <table style="width: 100%; border-collapse: collapse; font-family: Tahoma;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th style="padding: 10px; border: 1px solid #ccc;">فایل</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">نام فایل</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">حجم</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">تاریخ تغییر</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model)
+            {
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #eee;">
+                        @{
+                            var ext = file.FileExtension?.ToLower() ?? "";
+
+                            if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif" || ext == ".webp" || ext == ".bmp" || ext == ".jfif")
+                            {
+                                <img src="@file.FilePath" style="max-width: 100px; max-height: 100px;" />
+                            }
+                            else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg" || ext == ".mov")
+                            {
+                                <video width="200" height="150" controls>
+                                    <source src="@file.FilePath" type="video/@ext.TrimStart('.')">
+                                    مرورگر شما ویدئو را پشتیبانی نمی‌کند.
+                                </video>
+                            }
+                            else if (ext == ".mp3" || ext == ".wav" || ext == ".ogg" || ext == ".m4a" || ext == ".flac")
+                            {
+                                <audio controls>
+                                    <source src="@file.FilePath" type="audio/@ext.TrimStart('.')">
+                                    مرورگر شما صوت را پشتیبانی نمی‌کند.
+                                </audio>
+                            }
+                            else if (string.IsNullOrEmpty(ext))
+                            {
+                                <span>فرمت فایل خالی است</span>
+                            }
+                            else
+                            {
+                                <span>@file.FileName</span>
+                            }
+                        }
+                    </td>
+
+                    <td style="padding: 8px; border: 1px solid #eee;">@file.FileName</td>
+
+                    <td style="padding: 8px; border: 1px solid #eee;">
+                        @{
+                            long sizeInBytes = 0;
+                            if (long.TryParse(file.FileSize, out sizeInBytes))
+                            {
+                                double sizeInMB = (double)sizeInBytes / (1024 * 1024);
+                                string displaySize = sizeInMB.ToString("0.00") + " MB";
+                                <text>@displaySize</text>
+                            }
+                            else
+                            {
+                                <text>حجم فایل نامعتبر است</text>
+                            }
+                        }
+                    </td>
+
+                    <td style="padding: 8px; border: 1px solid #eee;">@file.FileDateModified.ToString("yyyy/MM/dd HH:mm:ss")</td>
+
+                    <td style="padding: 8px; border: 1px solid #eee;">
+                        <button onclick="returnFileUrlToCKEditor('@file.FilePath')" style="cursor:pointer; padding:4px 8px; font-size:14px;">
+                            انتخاب
+                        </button>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

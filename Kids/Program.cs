@@ -40,36 +40,34 @@ builder.Services.AddScoped<ILogService, LogService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage(); // ✅ نمایش خطا در توسعه
 }
 else
 {
-    app.UseExceptionHandler("/Error");
-    // برای نمایش خطاها حتی در حالت Production (موقت)
-    app.UseDeveloperExceptionPage();
+    app.UseExceptionHandler("/Error"); // ✅ نمایش صفحه خطا در Production
+    app.UseHsts();
 }
-app.UseStaticFiles();
+
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
-app.MapStaticAssets();
-app.UseStatusCodePagesWithReExecute("/Error/{0}");
-app.UseExceptionHandler("/Error/Error");
+
+app.UseStatusCodePagesWithReExecute("/Error/{0}"); 
+
+
+
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
@@ -78,11 +76,11 @@ app.UseEndpoints(endpoints =>
         defaults: new { controller = "SiteMap", action = "Index" });
 
     endpoints.MapHub<LogHub>("/LogHub");
-  endpoints.MapControllerRoute(
+
+    endpoints.MapControllerRoute(
         name: "areas",
         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
     );
 });
-
 
 app.Run();
