@@ -109,6 +109,146 @@ public class UploadController : Controller
             });
         }
 
+        string currentPathRelative = ""; 
+
+        if (!string.IsNullOrEmpty(AbsloutePath))
+        {
+            
+            currentPathRelative = AbsloutePath.TrimStart('\\', '/');
+        }
+
+        
+        string serverPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Upload", currentPathRelative);
+
+        
+        if (!Directory.Exists(serverPath))
+        {
+            Directory.CreateDirectory(serverPath);
+        }
+
+        ViewBag.CurrentPath = currentPathRelative; 
+
+
         return View(fileListDTO.OrderByDescending(f => f.FileDateModified).ToList());
     }
+
+    [HttpPost("UploadFile")]
+    public async Task<IActionResult> UploadFile(string Path, IFormFile formFile)
+    {
+        if (formFile != null && formFile.Length > 0)
+        {
+            try
+            {
+                var root = Directory.GetCurrentDirectory();
+                var safePath = Path ?? ""; 
+
+            
+                safePath = safePath.Replace("..", "").TrimStart('/', '\\');
+
+                var uploadPath = System.IO.Path.Combine(root, "wwwroot", "uploads", safePath);
+
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+
+                var fileExtension = System.IO.Path.GetExtension(formFile.FileName);
+                var fileName = Guid.NewGuid().ToString() + fileExtension;
+
+                var fileLocation = System.IO.Path.Combine(uploadPath, fileName);
+                using (var stream = System.IO.File.Create(fileLocation))
+                {
+                    await formFile.CopyToAsync(stream);
+                }
+
+                return Json(new { success = true, fileName });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "خطا در آپلود فایل", error = ex.Message });
+            }
+        }
+
+        return Json(new { success = false, message = "فایلی انتخاب نشده یا فایل خالی است." });
+    }
+    [HttpPost("CreateDirectory")]
+    public IActionResult CreateDirectory(string path, string folderName)
+    {
+        if (string.IsNullOrWhiteSpace(folderName) || folderName.Any(Path.GetInvalidFileNameChars().Contains))
+        {
+            return Json(new { success = false, message = "نام پوشه نامعتبر است" });
+        }
+
+        var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads");
+
+        var targetPath = Path.Combine(rootPath, path ?? "", folderName);
+
+     
+      
+        if (Directory.Exists(targetPath))
+        {
+            return Json(new { success = false, message = "این پوشه از قبل وجود دارد" });
+        }
+
+        Directory.CreateDirectory(targetPath);
+
+        return Json(new { success = true, message = "پوشه با موفقیت ساخته شد" });
+    }
+    [HttpPost("FolderRemove")]
+    public IActionResult FolderRemove(string path)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(path))
+                return Json(new { success = false, message = "مسیر فولدر مشخص نشده است." });
+
+            // مسیر کامل فولدر رو بساز
+            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Upload", path);
+
+            if (!Directory.Exists(fullPath))
+                return Json(new { success = false, message = "فولدر مورد نظر وجود ندارد." });
+
+            // حذف فولدر به همراه تمام محتویاتش
+            Directory.Delete(fullPath, true);
+
+            return Json(new { success = true, message = "فولدر با موفقیت حذف شد." });
+        }
+        catch (Exception ex)
+        {
+            // می‌تونی لاگ هم بزنی اینجا
+            return Json(new { success = false, message = "خطا در حذف فولدر: " + ex.Message });
+        }
+    }
+    [HttpPost("FileRemove")]
+    public IActionResult FileRemove(string path)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(path))
+                return Json(new { success = false, message = "مسیر فایل مشخص نشده است." });
+
+            // جلوگیری از دسترسی به مسیرهای بالاتر (مانند ../)
+            if (path.Contains(".."))
+                return Json(new { success = false, message = "مسیر نامعتبر است." });
+
+            // حذف اسلش اولیه اگر بود
+            path = path.TrimStart('/', '\\');
+
+            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Upload", path);
+
+            if (!System.IO.File.Exists(fullPath))
+                return Json(new { success = false, message = "فایل مورد نظر وجود ندارد." });
+
+            System.IO.File.Delete(fullPath);
+
+            return Json(new { success = true, message = "فایل با موفقیت حذف شد." });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = "خطا در حذف فایل: " + ex.Message });
+        }
+    }
+
+
+
 }

@@ -1,10 +1,513 @@
 ﻿@model List<Kids.Areas.Admin.AdminDTO.ShowFileDTO>
 
 @{
-    ViewData["Title"] = "ShowUploadFolder";
+    ViewData["Title"] = "مدیریت فایل‌ها";
     Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+    var ckFuncNum = Context.Request.Query["CKEditorFuncNum"].ToString();
+    var directories = ViewBag.Directories as List<DirectoryInfo>;
 }
 
+<style>
+    :root {
+        --primary-color: #4361ee;
+        --secondary-color: #3f37c9;
+        --success-color: #4cc9f0;
+        --danger-color: #f72585;
+        --warning-color: #f8961e;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 24px;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+        font-size: 14px;
+    }
+
+        .breadcrumb a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+            .breadcrumb a:hover {
+                text-decoration: underline;
+            }
+
+    .card {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 15px 20px;
+        font-weight: 600;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .btn {
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 10px 20px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+    .btn-success {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+        .btn-success:hover {
+            background-color: #38b6db;
+        }
+
+    .btn-danger {
+        background-color: var(--danger-color);
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background-color: #e5177a;
+        }
+
+    .btn-warning {
+        background-color: var(--warning-color);
+        color: white;
+    }
+
+        .btn-warning:hover {
+            background-color: #e68a19;
+        }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th {
+            background-color: #f1f3f9;
+            padding: 12px 15px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .table tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+    .file-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        border-radius: 6px;
+        color: var(--primary-color);
+        font-size: 18px;
+    }
+
+    .file-preview {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    .video-preview {
+        width: 120px;
+        height: 80px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    .audio-preview {
+        width: 200px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .form-container {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+    }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            outline: none;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6c757d;
+    }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #adb5bd;
+            margin-bottom: 15px;
+        }
+
+    .path-navigation {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .path-segment {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .path-segment a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+    .path-separator {
+        color: #6c757d;
+    }
+
+    
+
+    .actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1 class="page-title">مدیریت فایل‌ها</h1>
+        <nav class="breadcrumb">
+            @if (ViewBag.ParentFolder != null)
+            {
+                <a href="/Admin/upload/showUploadFolder?AbsloutePath=@ViewBag.ParentFolder&&CKEditorFuncNum=@ckFuncNum">
+                    <i class="fas fa-arrow-right"></i> بازگشت به پوشه قبل
+                </a>
+            }
+        </nav>
+    </div>
+
+    <div class="path-navigation">
+        @if (ViewBag.CurrentPath != null)
+        {
+            var pathSegments = ViewBag.CurrentPath.ToString().Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var currentPath = "";
+
+            foreach (var segment in pathSegments)
+            {
+                currentPath += segment + "/";
+                <div class="path-segment">
+                    <a href="/Admin/upload/showUploadFolder?AbsloutePath=@currentPath&&CKEditorFuncNum=@ckFuncNum">@segment</a>
+                    <span class="path-separator">/</span>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-folder-plus"></i> مدیریت پوشه‌ها
+        </div>
+        <div class="card-body">
+            <button id="ToggleCreateFolderForm" class="btn btn-primary mb-3">
+                <i class="fas fa-folder-plus"></i> ایجاد پوشه جدید
+            </button>
+
+            <div id="CreateFolderContainer" style="display: none;" class="form-container">
+                <h5><i class="fas fa-folder"></i> ساخت پوشه جدید</h5>
+                <form id="CreateFolderForm">
+                    <div class="form-group">
+                        <label for="folderName" class="form-label">نام پوشه:</label>
+                        <input type="text" class="form-control" name="folderName" id="folderName" required />
+                    </div>
+                    <input type="hidden" name="path" value="@ViewBag.CurrentPath" />
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i> ایجاد پوشه
+                    </button>
+                </form>
+            </div>
+
+            @if (directories != null && directories.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>نام پوشه</th>
+                                <th>تاریخ ایجاد</th>
+                                <th>آخرین تغییر</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var dir in directories)
+                            {
+                                <tr data-path="@dir.FullName">
+                                    <td>
+                                        <a href="/Admin/upload/showuploadfolder?AbsloutePath=@dir.FullName&&CKEditorFuncNum=@ckFuncNum" style="display: flex; align-items: center; gap: 10px;">
+                                            <div class="file-icon">
+                                                <i class="fas fa-folder"></i>
+                                            </div>
+                                            <span>@dir.Name</span>
+                                        </a>
+                                    </td>
+                                    <td>@dir.CreationTime.ToString("yyyy/MM/dd HH:mm")</td>
+                                    <td>@dir.LastWriteTime.ToString("yyyy/MM/dd HH:mm")</td>
+                                    <td>
+                                        <button class="btn btn-danger btnDeleteFolder">
+                                            <i class="fas fa-trash"></i> حذف
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>هیچ پوشه‌ای یافت نشد</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-file-upload"></i> مدیریت فایل‌ها
+        </div>
+        <div class="card-body">
+            <button id="ToggleUploadForm" class="btn btn-primary mb-3">
+                <i class="fas fa-upload"></i> آپلود فایل جدید
+            </button>
+
+            <div id="UploadFormContainer" style="display: none;" class="form-container">
+                <h5><i class="fas fa-file-upload"></i> آپلود فایل جدید</h5>
+                <form action="/Admin/Upload/UploadFile" id="UploadForm" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">انتخاب فایل:</label>
+                        <input type="file" name="formFile" class="form-control" />
+                    </div>
+                    <input type="hidden" name="Path" value="@ViewBag.CurrentPath" />
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-upload"></i> آپلود فایل
+                    </button>
+                </form>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>پیش‌نمایش</th>
+                                <th>نام فایل</th>
+                                <th>حجم</th>
+                                <th>تاریخ تغییر</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var file in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @{
+                                            var ext = file.FileExtension?.ToLower() ?? "";
+
+                                            if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif" || ext == ".webp" || ext == ".bmp" || ext == ".jfif")
+                                            {
+                                                <img src="@file.FilePath" class="file-preview" />
+                                            }
+                                            else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg" || ext == ".mov")
+                                            {
+                                                <video width="120" height="80" controls class="video-preview">
+                                                    <source src="@file.FilePath" type="video/@ext.TrimStart('.')">
+                                                </video>
+                                            }
+                                            else if (ext == ".mp3" || ext == ".wav" || ext == ".ogg" || ext == ".m4a" || ext == ".flac")
+                                            {
+                                                <audio controls class="audio-preview">
+                                                    <source src="@file.FilePath" type="audio/@ext.TrimStart('.')">
+                                                </audio>
+                                            }
+                                            else
+                                            {
+                                                <div class="file-icon">
+                                                    @switch (ext)
+                                                    {
+                                                        case ".pdf":
+                                                            <i class="fas fa-file-pdf"></i>
+                                                            break;
+                                                        case ".doc":
+                                                        case ".docx":
+                                                            <i class="fas fa-file-word"></i>
+                                                            break;
+                                                        case ".xls":
+                                                        case ".xlsx":
+                                                            <i class="fas fa-file-excel"></i>
+                                                            break;
+                                                        case ".ppt":
+                                                        case ".pptx":
+                                                            <i class="fas fa-file-powerpoint"></i>
+                                                            break;
+                                                        case ".zip":
+                                                        case ".rar":
+                                                            <i class="fas fa-file-archive"></i>
+                                                            break;
+                                                        default:
+                                                            <i class="fas fa-file"></i>
+                                                            break;
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                    </td>
+                                    <td>@file.FileName</td>
+                                    <td>
+                                        @{
+                                            long sizeInBytes = 0;
+                                            if (long.TryParse(file.FileSize, out sizeInBytes))
+                                            {
+                                                double sizeInMB = (double)sizeInBytes / (1024 * 1024);
+                                                string displaySize = sizeInMB.ToString("0.00") + " MB";
+                                                <text>@displaySize</text>
+                                            }
+                                            else
+                                            {
+                                                <text>نامشخص</text>
+                                            }
+                                        }
+                                    </td>
+                                    <td>@file.FileDateModified.ToString("yyyy/MM/dd HH:mm:ss")</td>
+                                    <td class="actions">
+                                        <button onclick="returnFileUrlToCKEditor('@file.FilePath')" class="btn btn-success">
+                                            <i class="fas fa-check"></i> انتخاب
+                                        </button>
+                                        <button class="btn btn-danger delete-btn" data-filepath="@file.FilePath">
+                                            <i class="fas fa-trash"></i> حذف
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-file-alt"></i>
+                    <p>هیچ فایلی برای نمایش وجود ندارد</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
     function returnFileUrlToCKEditor(url) {
         var funcNum = getUrlParam('CKEditorFuncNum');
@@ -17,135 +520,168 @@
         var match = window.location.search.match(reParam);
         return (match && match.length > 1) ? match[1] : null;
     }
+
+    $(document).ready(function () {
+        // نمایش/مخفی کردن فرم ساخت پوشه
+        $("#ToggleCreateFolderForm").click(function () {
+            $("#CreateFolderContainer").slideToggle();
+        });
+
+        // ارسال فرم ساخت پوشه با AJAX
+        $("#CreateFolderForm").submit(function (e) {
+            e.preventDefault();
+
+            var path = $("input[name='path']").val();
+            var folderName = $("#folderName").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/Upload/CreateDirectory",
+                data: { path: path, folderName: folderName },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "موفق!",
+                            text: response.message,
+                            icon: "success",
+                            confirmButtonText: "باشه"
+                        }).then(() => location.reload());
+                    } else {
+                        Swal.fire({
+                            title: "خطا",
+                            text: response.message,
+                            icon: "error",
+                            confirmButtonText: "باشه"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire("خطا", "مشکلی در ایجاد پوشه پیش آمد", "error");
+                }
+            });
+        });
+
+        // نمایش/مخفی کردن فرم آپلود فایل
+        $("#ToggleUploadForm").click(function () {
+            $("#UploadFormContainer").slideToggle();
+        });
+
+        // ارسال فرم آپلود فایل
+        $("#UploadForm").submit(function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/Upload/UploadFile",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'موفق!',
+                            text: 'فایل با موفقیت آپلود شد',
+                            confirmButtonText: 'باشه'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا',
+                            text: response.messege || 'خطایی رخ داده است'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطای سرور',
+                        text: 'در ارتباط با سرور مشکلی پیش آمده است.'
+                    });
+                }
+            });
+        });
+
+        // حذف پوشه
+        $(".btnDeleteFolder").click(function() {
+            var row = $(this).closest("tr");
+            var folderPath = row.data("path");
+
+            Swal.fire({
+                title: 'آیا مطمئن هستید؟',
+                text: "فولدر و تمام محتویات آن حذف خواهد شد!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'بله، حذف کن',
+                cancelButtonText: 'خیر'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/Upload/FolderRemove',
+                        type: 'POST',
+                        data: { path: folderPath },
+                        success: function(response) {
+                            if(response.success) {
+                                Swal.fire(
+                                    'حذف شد!',
+                                    response.message,
+                                    'success'
+                                );
+                                row.remove();
+                            } else {
+                                Swal.fire(
+                                    'خطا!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'خطا!',
+                                'در ارتباط با سرور خطایی رخ داده است.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        // حذف فایل
+        $('.delete-btn').click(function () {
+            var btn = $(this);
+            var filePath = btn.data('filepath');
+
+            Swal.fire({
+                title: 'آیا از حذف این فایل مطمئن هستید؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله، حذف کن',
+                cancelButtonText: 'انصراف'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/admin/upload/FileRemove',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ filePath: filePath }),
+                        success: function () {
+                            btn.closest('tr').remove();
+                            Swal.fire('حذف شد!', 'فایل با موفقیت حذف شد.', 'success');
+                        },
+                        error: function () {
+                            Swal.fire('خطا!', 'حذف فایل با مشکل مواجه شد.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
 </script>
-@{
-    var ckFuncNum = Context.Request.Query["CKEditorFuncNum"].ToString();
-}
-@{
-    var directories = ViewBag.Directories as List<DirectoryInfo>;
-}
-@{
-    @if (ViewBag.ParentFolder != null)
-    {
-
-
-        <a href="/Admin/upload/showUploadFolder?AbsloutePath=@ViewBag.ParentFolder&&CKEditorFuncNum=@ckFuncNum">بازگشت به پوشه قبل</a>
-    }
-
-}
-@if (directories != null && directories.Any())
-{
-    <h2 style="font-family: Tahoma; color: #333; margin-bottom: 20px;">لیست پوشه‌ها</h2>
-    <table style="width: 100%; border-collapse: collapse; font-family: Tahoma;">
-        <thead>
-        <tr style="background-color: #f2f2f2;">
-            <th style="padding: 10px; border: 1px solid #ccc;">نام پوشه</th>
-            <th style="padding: 10px; border: 1px solid #ccc;">تاریخ ایجاد</th>
-            <th style="padding: 10px; border: 1px solid #ccc;">آخرین تغییر</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var dir in directories)
-        {
-            <tr>
-                    <td style="padding: 8px; border: 1px solid #eee; color: #0000ff"><a href="/Admin/upload/showuploadfolder?AbsloutePath=@dir.FullName&&CKEditorFuncNum=@ckFuncNum">@dir.Name</a></td>
-                <td style="padding: 8px; border: 1px solid #eee;">@dir.CreationTime.ToString("yyyy/MM/dd HH:mm")</td>
-                <td style="padding: 8px; border: 1px solid #eee;">@dir.LastWriteTime.ToString("yyyy/MM/dd HH:mm")</td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
-else
-{
-    <p style="font-family: Tahoma; color: red;">هیچ پوشه‌ای یافت نشد</p>
-}
-<br/><br>
-<hr/>
-<br />
-<br>
-@if (Model == null || !Model.Any())
-{
-    <p style="color: red; font-family: Tahoma;">هیچ فایلی برای نمایش وجود ندارد.</p>
-}
-else
-{
-    <h2 style="font-family: Tahoma; color: #333; margin-bottom: 20px;">لیست فایل‌ها</h2>
-    <table style="width: 100%; border-collapse: collapse; font-family: Tahoma;">
-        <thead>
-            <tr style="background-color: #f2f2f2;">
-                <th style="padding: 10px; border: 1px solid #ccc;">فایل</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">نام فایل</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">حجم</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">تاریخ تغییر</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">عملیات</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var file in Model)
-            {
-                <tr>
-                    <td style="padding: 8px; border: 1px solid #eee;">
-                        @{
-                            var ext = file.FileExtension?.ToLower() ?? "";
-
-                            if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif" || ext == ".webp" || ext == ".bmp" || ext == ".jfif")
-                            {
-                                <img src="@file.FilePath" style="max-width: 100px; max-height: 100px;" />
-                            }
-                            else if (ext == ".mp4" || ext == ".webm" || ext == ".ogg" || ext == ".mov")
-                            {
-                                <video width="200" height="150" controls>
-                                    <source src="@file.FilePath" type="video/@ext.TrimStart('.')">
-                                    مرورگر شما ویدئو را پشتیبانی نمی‌کند.
-                                </video>
-                            }
-                            else if (ext == ".mp3" || ext == ".wav" || ext == ".ogg" || ext == ".m4a" || ext == ".flac")
-                            {
-                                <audio controls>
-                                    <source src="@file.FilePath" type="audio/@ext.TrimStart('.')">
-                                    مرورگر شما صوت را پشتیبانی نمی‌کند.
-                                </audio>
-                            }
-                            else if (string.IsNullOrEmpty(ext))
-                            {
-                                <span>فرمت فایل خالی است</span>
-                            }
-                            else
-                            {
-                                <span>@file.FileName</span>
-                            }
-                        }
-                    </td>
-
-                    <td style="padding: 8px; border: 1px solid #eee;">@file.FileName</td>
-
-                    <td style="padding: 8px; border: 1px solid #eee;">
-                        @{
-                            long sizeInBytes = 0;
-                            if (long.TryParse(file.FileSize, out sizeInBytes))
-                            {
-                                double sizeInMB = (double)sizeInBytes / (1024 * 1024);
-                                string displaySize = sizeInMB.ToString("0.00") + " MB";
-                                <text>@displaySize</text>
-                            }
-                            else
-                            {
-                                <text>حجم فایل نامعتبر است</text>
-                            }
-                        }
-                    </td>
-
-                    <td style="padding: 8px; border: 1px solid #eee;">@file.FileDateModified.ToString("yyyy/MM/dd HH:mm:ss")</td>
-
-                    <td style="padding: 8px; border: 1px solid #eee;">
-                        <button onclick="returnFileUrlToCKEditor('@file.FilePath')" style="cursor:pointer; padding:4px 8px; font-size:14px;">
-                            انتخاب
-                        </button>
-
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
