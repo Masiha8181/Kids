@@ -1,0 +1,70 @@
+﻿@model string
+@using Kids.Services
+
+@{
+    ViewData["Title"] = "Preview";
+    Layout = "~/Views/Shared/DefaultLayout.cshtml";
+}
+
+<div class="Article-Container2">
+
+    <article class="Article-Main">
+     
+
+        <div class="Article-Content">
+            @Html.Raw(Model)
+        </div>
+ 
+
+     
+    </article>
+
+    <aside class="Article-SideBar">
+        <div class="Top-Article-SideBar-Container">
+            <h3> <i class="fa-solid fa-newspaper"></i>آخرین مقالات</h3>
+            @{
+                foreach (var VARIABLE in ViewBag.Last as List<Article>)
+                {
+                    <a href="/Article/@VARIABLE.Id/@SlugMacker.GenerateSlug(VARIABLE.ArticleName)">
+                        <div class="Top-Article-SideBar">
+                            <img src="/uploads/Article/@VARIABLE.ImageAddress" alt="مادر و کودک |@VARIABLE.ArticleName">
+                            <span class="SideBarTitle">@VARIABLE.ArticleName</span>
+                            <p>
+                                @VARIABLE.ShortDescription
+                            </p>
+
+                        </div>
+                    </a>
+                }
+            }
+
+
+
+        </div>
+        <div class="Top-Article-SideBar-Container">
+            <h3> <i class="fa-solid fa-trophy"></i>محبوب ترین مقالات</h3>
+            @{
+                foreach (var VARIABLE in ViewBag.Last as List<Article>)
+                {
+                    <a href="/Article/@VARIABLE.Id/@VARIABLE.ArticleName.Replace(" ", "-")">
+                        <div class="Top-Article-SideBar">
+                            <img src="/uploads/Article/@VARIABLE.ImageAddress" alt="مادر و کودک |@VARIABLE.ArticleName">
+                            <span class="SideBarTitle">@VARIABLE.ArticleName</span>
+                            <p>
+                                @VARIABLE.ShortDescription
+                            </p>
+
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+        <a href="">
+            <div class="Article-Link">
+                <img src="/images/300-63inst.jpg" alt="">
+                <img src="/images/300-63tel.jpg" alt="">
+            </div>
+        </a>
+    </aside>
+</div>
+

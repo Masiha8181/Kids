@@ -21,7 +21,7 @@ namespace Kids.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            var list = _context.Articles.Where(p => p.IsDeleted != true).Include(o => o.ArticleGroup).ToList();
+            var list = _context.Articles.Where(p => p.IsDeleted != true).Include(o => o.ArticleGroup).OrderByDescending(c=>c.CreateDate).ToList();
 
             return View(list);
         }
@@ -225,6 +225,18 @@ namespace Kids.Areas.Admin.Controllers
             }
 
             return View(editArticleDto);
+        }
+
+        [HttpPost]
+        public IActionResult Preview(string content)
+        {
+            if (!string.IsNullOrEmpty(content))
+            {
+                ViewBag.Last = _context.Articles.Where(p => p.IsDeleted != true && p.IsActive == true).OrderByDescending(p => p.CreateDate).Take(3).ToList();
+                return View("~/Areas/Admin/Views/Article/Preview.cshtml", content);
+            }
+
+            return NoContent();
         }
     }
 }

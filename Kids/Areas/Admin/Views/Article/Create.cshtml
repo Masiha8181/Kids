@@ -49,7 +49,23 @@
         <br />
         <span asp-validation-for="FullDescription"></span>
         <textarea asp-for="FullDescription" style="height: 400px!important;resize: none!important" class="form-control" id="FullDescription"></textarea>
+        <br/>
+        <button id="preview" style="
+                                    background-color: #4A90E2;   /* آبی ملایم */
+                                    color: white;               /* متن سفید */
+                                   
+                                    padding: 10px 20px;         /* فاصله داخلی */
+                                    border: none;               /* حذف حاشیه */
+                                    border-radius: 8px;         /* گوشه‌های گرد */
+                                    cursor: pointer;            /* نشانگر موس */
+                                    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* سایه ملایم */
+                                    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+                                ">
+            پیش نمایش
+        </button>
+        <br/>
     </div>
+
     <div class="mb-3">
 
         <label class="form-label">  تگ ها با - جدا کنید :</label>
@@ -115,6 +131,26 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
 <script>
+          $("#preview").click(function(e) {
+        e.preventDefault();
+
+        var content = CKEDITOR.instances.FullDescription.getData(); // ✅ گرفتن مقدار از CKEditor
+
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Article/Preview",
+            data: { content: content },
+            dataType: "html",
+            success: function(response) {
+                var w = window.open();
+                $(w.document.body).html(response);
+            },
+            error: function() {
+                alert("مشکلی در پیش‌نمایش رخ داد.");
+            }
+        });
+    });
+
     
     $(document).ready(function () {
         // بررسی اولیه هنگام لود صفحه
@@ -183,5 +219,6 @@
         }
     });
     
+
 </script>
     

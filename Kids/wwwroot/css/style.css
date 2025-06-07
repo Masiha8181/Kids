@@ -1439,31 +1439,42 @@ margin: 10px 5px;
     hyphens: auto; /* فعال کردن تقسیم خودکار کلمات */
 }
 
-.Tag-Container{
-  display: inline-block;
-  width: 90%;
-  margin: 10px 0px;
-  text-align: center;
-  border-radius: 20px ;
-  border: 1px solid #EFF1F3;
-  padding: 10px 0px;
-  text-align: right;
-  padding-right: 30px;
+.Tag-Container {
+    display: inline-block;
+    width: 90%;
+    margin: 10px 0;
+    padding: 10px 30px 10px 10px; /* بالا-راست-پایین-چپ */
+    text-align: right;
+    border-radius: 20px;
+    border: 1px solid #EFF1F3;
+    background-color: #fafafa; /* یک رنگ پس‌زمینه ملایم اضافه کردم */
+    box-sizing: border-box; /* برای بهتر شدن پدینگ و سایز */
 
 }
-.Tag-Container a{
-  text-decoration: none;
-  background-color: #EFF1F3;
-  color: #1e345a;
-  padding: 5px 10px;
-  margin: 0px 5px;
-  font-size: 0.8em;
-  border-radius: 20px;
-  margin: 10px 5px;
+
+.Tag-Container a {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #EFF1F3;
+    color: #1e345a;
+    padding: 5px 12px;
+    margin: 10px 5px 0 0; /* بالا-راست-پایین-چپ */
+    font-size: 0.85em;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
-.Tag-Container i{
-  margin: 0px 5px;
+
+.Tag-Container a:hover {
+    background-color: #1e345a;
+    color: #fff;
 }
+
+.Tag-Container i {
+    margin: 0 5px 0 0; /* فقط به راست فاصله دادم */
+    vertical-align: middle; /* برای وسط‌چین شدن آیکون‌ها */
+    color: #1e345a;
+}
+
 .Article-SideBar{
   display: inline-block;
   width: 20%;

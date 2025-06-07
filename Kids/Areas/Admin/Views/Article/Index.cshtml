@@ -14,7 +14,7 @@
             <td>نام مقاله</td>
             <td>تصویر </td>
             <td>توضیحات کوتاه</td>
-            <td>توضیحات اصلی </td>
+         
            
             <td> آیا فعال است؟ </td>
            
@@ -31,14 +31,12 @@
                         @items.ArticleName
                     </td>
                     <td>
-                        <img src="/uploads/@items.ImageAddress" style="max-width: 100px">
+                        <img src="/uploads/Article/@items.ImageAddress" style="max-width: 100px">
                     </td>
                     <td>
                         @items.ShortDescription
                     </td>
-                    <td>
-                        @items.FullDescription
-                    </td>
+                   
                   
                     <td>
                         @items.IsActive
